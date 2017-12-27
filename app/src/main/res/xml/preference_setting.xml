@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="常规">
+        <Preference
+            android:key="player"
+            android:summary="当前播放器：哔哩哔哩"
+            android:title="选择播放器" />
+
+        <Preference
+            android:key="theme"
+            android:summary="库洛里多创造的库洛牌啊，请你舍弃旧形象，以小樱之名命令你，封印解除！！！"
+            android:title="切换主题" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="强迫症选项">
+       <SwitchPreference
+           android:key="home_time_line"
+           android:defaultValue="true"
+           android:title="主页设置时间线卡片"
+           android:summaryOff="已隐藏"
+           android:summaryOn="已显示"
+            />
+        <SwitchPreference
+            android:key="region_time_line"
+            android:defaultValue="true"
+            android:summaryOff="已隐藏"
+            android:summaryOn="已显示"
+            android:title="分区详情页设置时间页" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="其它">
+        <Preference
+            android:title="关于"
+            android:summary="版本"
+            android:key="about">
+        </Preference>
+        <Preference
+            android:title="捐助"
+            android:summary="开发者想买内存条"
+            android:key="donate"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

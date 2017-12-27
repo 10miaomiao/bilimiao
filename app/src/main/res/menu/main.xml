@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item android:title="设置"
+        android:id="@+id/setting"/>
+    <item android:title="切换主题"
+        android:id="@+id/theme"/>
+</menu>

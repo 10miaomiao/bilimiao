@@ -1,0 +1,89 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.a10miaomiao.bilimiao">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--&lt;!&ndash; 在SDCard中创建与删除文件权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>-->
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 往SDCard读取数据权限 -->
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
+
+    <!-- content://contacts/people 需要使用该权限-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
+
+        </activity>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.InfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="查看b站封面">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.RegionTypeDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.SelectorDateActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.EditPreventKeywordActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.UpperDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.UpperVideoListActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.UpperChannelVideoListActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.DanmakuActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.PlayInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.RankActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.PhotoActivity"
+            android:theme="@style/PhotoTheme"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.SettingActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name=".activitys.ThemePickerActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+    </application>
+
+</manifest>

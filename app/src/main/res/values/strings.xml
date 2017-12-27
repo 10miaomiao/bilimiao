@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">bilimiao</string>
+    <string-array name="player_name">
+        <item>哔哩哔哩</item>
+        <item>哔哩哔哩(play版)</item>
+        <item>哔哩哔哩概念版</item>
+        <item>用浏览器打开</item>
+    </string-array>
+    <string-array name="player_val">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="statement">
+        1、本程序为哔哩哔哩动画的第三方助手类工具，所有资源均来自哔哩哔哩动画\n
+        2、如果侵犯您的合法权益，请及时联系本人以第一时间删除
+    </string>
+</resources>

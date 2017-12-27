@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.a10miaomiao.bilimiao.widget.DropDownMenu
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="默认排序"
+            android:id="@+id/tv_rank_order"
+            android:background="?attr/selectableItemBackground"
+            android:drawableRight="@drawable/ic_arrow_drop_down_24dp"/>
+        <com.a10miaomiao.bilimiao.widget.DropDownMenu
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="全部时长"
+            android:padding="5dp"
+            android:id="@+id/tv_duration"
+            android:background="?attr/selectableItemBackground"
+            android:drawableRight="@drawable/ic_arrow_drop_down_24dp"/>
+        <com.a10miaomiao.bilimiao.widget.DropDownMenu
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="全部分区"
+            android:padding="5dp"
+            android:id="@+id/tv_region"
+            android:background="?attr/selectableItemBackground"
+            android:drawableRight="@drawable/ic_arrow_drop_down_24dp"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@color/gray_light"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_ly"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ImageView
+            android:id="@+id/empty_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_movie_pay_area_limit"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

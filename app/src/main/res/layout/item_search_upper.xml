@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <com.gcssloop.widget.RCRelativeLayout
+        android:id="@+id/item_avatar_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:round_as_circle="true"
+        android:layout_margin="@dimen/default_general_margin">
+
+        <ImageView
+            android:id="@+id/item_avatar_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ico_user_default" />
+    </com.gcssloop.widget.RCRelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/item_avatar_layout">
+
+
+        <TextView
+            android:id="@+id/item_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:textColor="@color/font_normal"
+            android:textSize="@dimen/default_medium_text_size" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <TextView
+                android:id="@+id/item_user_fans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/item_user_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="14sp"
+                android:layout_marginLeft="@dimen/default_grow_margin" />
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/item_user_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="3dp"
+            android:textColor="@color/black_alpha_45"
+            android:textSize="14sp" />
+    </LinearLayout>
+</RelativeLayout>

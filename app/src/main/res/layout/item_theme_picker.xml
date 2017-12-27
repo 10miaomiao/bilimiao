@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <com.gcssloop.widget.RCRelativeLayout
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:round_as_circle="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/pink"
+            android:id="@+id/item_color"/>
+    </com.gcssloop.widget.RCRelativeLayout>
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="276dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="少女粉"
+        android:textColor="@color/pink" />
+
+    <TextView
+        android:id="@+id/item_is_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:text="使用中" />
+
+</LinearLayout>
