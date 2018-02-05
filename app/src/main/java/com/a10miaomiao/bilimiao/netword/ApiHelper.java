@@ -26,13 +26,12 @@ public class ApiHelper {
     public static final String _appSecret_Android2 = "jr3fcr8w7qey8wb0ty5bofurg2cmad8x";
     public static final String _appSecret_VIP = "jr3fcr8w7qey8wb0ty5bofurg2cmad8x";
 
-    public static long GetTimeSpen() {
+    public static long getTimeSpen() {
         Date date = new Date();
         return date.getTime();
-        //return Convert.ToInt64((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
     }
 
-    public static String GetSign_Android(String url) {
+    public static String getSing(String url,String secret){
         String result;
         String str = url.substring(url.indexOf("?", 4) + 1);
         List<String> list = array2list(str.split("&"));
@@ -43,9 +42,13 @@ public class ApiHelper {
             stringBuilder.append(str1);
         }
         log(stringBuilder.toString());
-        str = stringBuilder.toString() + _appSecret_Android;
+        str = stringBuilder.toString() + secret;
         result = getMD5(str);
         return result;
+
+    }
+    public static String getSign_Android(String url) {
+        return getSing(url,_appSecret_Android);
     }
 
 

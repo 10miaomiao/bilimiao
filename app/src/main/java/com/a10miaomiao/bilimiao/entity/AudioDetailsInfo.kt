@@ -19,9 +19,9 @@ class AudioDetailsInfo(aid: String) : DetailsInfo(aid) {
                 onResponse = {
                     var a = "window.__INITIAL_STATE__ = "
                     var n = it.indexOf(a)
-                    var m = it.indexOf(";", n)
+                    var m = it.indexOf("};", n)
                     if (n != -1 && m != -1) {
-                        var s = it.substring(n + a.length, m)
+                        var s = it.substring(n + a.length, m + 1)
                         log(s)
                         val jsonParser = JSONTokener(s)
                         try {
@@ -29,10 +29,7 @@ class AudioDetailsInfo(aid: String) : DetailsInfo(aid) {
                             pic = jsonObject.getString("cover_url")
                             title = jsonObject.getString("title")
                             var urls = jsonObject.getJSONArray("urls")
-                            if(urls.length() > 0)
-                                audio_url = urls.getString(0)
-                            else
-                                audio_url = "获取失败"
+                            audio_url = if(urls.length() > 0) urls.getString(0) else "获取失败"
                             onResponse?.invoke(this@AudioDetailsInfo)
                         } catch (e: JSONException) {
                             e.printStackTrace()

@@ -51,7 +51,7 @@ class SettingPreferenceFragment : PreferenceFragment() {
     private fun showVersion() {
         val version = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
         about.summary = "版本：" + version
-        donate.summary = "开发者想买内存条o((>ω< ))o"
+        donate.summary = "开发者想买女朋友o((>ω< ))o"
         var n = SettingUtil.getInt(activity, ConstantUtil.PLAYER, ConstantUtil.PLAYER_BILI)
         n = if (n in 0..3) n else ConstantUtil.PLAYER_BILI
         player.summary = "当前播放器：${select_items[n]}"

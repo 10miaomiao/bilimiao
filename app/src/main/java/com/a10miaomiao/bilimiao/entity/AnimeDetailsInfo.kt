@@ -11,7 +11,7 @@ import org.json.JSONTokener
  */
 class AnimeDetailsInfo(aid: String) : DetailsInfo(aid) {
     var episodes = ArrayList<BangumiEpisodesInfo>()
-    override var aidType = "anime"
+    override var aidType = "ss"
     override fun get() {
         MiaoHttp.newStringClient(
                 url = BiliApiService.getBangumiInfo(aid),

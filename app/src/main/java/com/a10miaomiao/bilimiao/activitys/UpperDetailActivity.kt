@@ -86,7 +86,6 @@ class UpperDetailActivity : BaseActivity() {
                 isPrevent = true
                 toolbar.menu.getItem(0).title = "取消屏蔽该up主"
             }
-
             true
         }
     }

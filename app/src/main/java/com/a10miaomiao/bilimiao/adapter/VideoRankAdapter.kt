@@ -1,5 +1,6 @@
 package com.a10miaomiao.bilimiao.adapter
 
+import android.util.TypedValue
 import android.widget.TextView
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.entity.VideoRankInfo
@@ -30,10 +31,14 @@ class VideoRankAdapter(list: List<VideoRankInfo.VideoInfo>)
         helper?.setText(R.id.item_duration, item?.duration!!)
         var sort_num = helper!!.getView<TextView>(R.id.item_sort_num)
         sort_num.text = item!!.sort_num.toString()
-        if (item!!.sort_num <= 3)
-            sort_num.setTextColor(mContext.resources.getColor(R.color.colorAccent))
-        else
-            sort_num.setTextColor(mContext.resources.getColor(R.color.text_black))
+        sort_num.setTextColor(
+                if(item!!.sort_num <= 3) {
+                    val typedValue = TypedValue()
+                    mContext.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
+                    mContext.resources.getColor(typedValue.resourceId)
+                }else
+                    mContext.resources.getColor(R.color.text_black)
+        )
         helper?.setText(R.id.item_pts, "综合评分：${item!!.pts}")
     }
 

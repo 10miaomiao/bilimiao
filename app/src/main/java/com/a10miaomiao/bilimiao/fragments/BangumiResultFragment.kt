@@ -120,7 +120,7 @@ class BangumiResultFragment : BaseFragment() {
                         if (listSize < pageNum * pageSize && dataBean.data.items != null) {
                             archives.addAll(dataBean.data.items.filter {
                                 for (i in pKeywords) {
-                                    if (it.title.indexOf(i) != -1) {
+                                    if (i.toUpperCase() in it.title.toUpperCase()) {
                                         pNumber++
                                         false
                                     }

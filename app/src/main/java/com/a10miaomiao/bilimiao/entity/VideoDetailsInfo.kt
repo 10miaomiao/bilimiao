@@ -2,6 +2,7 @@ package com.a10miaomiao.bilimiao.entity
 
 import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
+import com.a10miaomiao.bilimiao.utils.log
 import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
@@ -16,15 +17,31 @@ class VideoDetailsInfo(aid: String) : DetailsInfo(aid) {
     var uper_face: String? = null
     var uper_id: Int? = null
     var pages = ArrayList<VideoPageInfo>()
+
+    var ep_id = ""
+
+    var download_type = "video"
     override fun get() {
         MiaoHttp.newStringClient(
                 url = BiliApiService.getVideoInfo(aid),
                 onResponse = {
+                    log(it)
                     val jsonParser = JSONTokener(it)
                     try {
                         val jsonObject = (jsonParser.nextValue() as JSONObject).getJSONObject("data")
                         pic = jsonObject.getString("pic")
                         title = jsonObject.getString("title")
+                        //判断是否为番剧
+                        if(!jsonObject.isNull("season")){
+                            download_type = "anime"
+                            //获取epid
+                            var redirect_url = jsonObject.getString("redirect_url")
+                            var n = redirect_url.indexOf("ep")
+                            var m = redirect_url.indexOf("/",n)
+                            if (n != -1 && m != -1){
+                                ep_id = redirect_url.substring(n + 2 ,m)
+                            }
+                        }
                         val uper = jsonObject.getJSONObject("owner")
                         uper_id = uper.getInt("mid")
                         uper_name = uper.getString("name")
@@ -49,7 +66,7 @@ class VideoDetailsInfo(aid: String) : DetailsInfo(aid) {
                         onError?.invoke(e, "视频信息解析失败或无该av号")
                     } catch (e: ClassCastException) {
                         onError?.invoke(e, "网络好像有问题＞﹏＜")
-                }
+                    }
                 },
                 onError = {
                     onError?.invoke(it, "无法连接到御坂网络")

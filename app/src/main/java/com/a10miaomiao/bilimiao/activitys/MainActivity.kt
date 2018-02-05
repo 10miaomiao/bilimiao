@@ -86,6 +86,9 @@ class MainActivity : BaseActivity() {
         btn_edit_keyword.setOnClickListener {
             EditPreventKeywordActivity.launch(activity)
         }
+        btn_downlaod.setOnClickListener {
+            DownloadActivity.launch(activity)
+        }
         searchClipboard()
         setRegionCard()
         setTimeLineCard()
@@ -148,7 +151,7 @@ class MainActivity : BaseActivity() {
      */
     private fun search(key: String): Info? {
         var a = ""
-        var ss = arrayOf("av", "anime", "live", "au", "cv")
+        var ss = arrayOf("av", "ss", "live", "au", "cv")
         for (s in ss) {
             a = getAid(key, "$s(\\d+)")
             if (a != "") {
@@ -187,7 +190,7 @@ class MainActivity : BaseActivity() {
         }
         a = getAid(text, ".*http://bangumi.bilibili.com/anime/(\\d+)/.*")
         if (a != "") {
-            info = Info(a, "anime")
+            info = Info(a, "ss")
             return
         }
         a = getAid(text, ".*http://live.bilibili.com/live/(\\d+).html.*")
@@ -203,6 +206,11 @@ class MainActivity : BaseActivity() {
         a = getAid(text, ".*http://www.bilibili.com/read/cv(\\d+)")
         if (a != "") {
             info = Info(a, "cv")
+            return
+        }
+        a = getAid(text, ".*http://m.bilibili.com/bangumi/play/ss(\\d+)")
+        if (a != "") {
+            info = Info(a, "ss")
             return
         }
     }

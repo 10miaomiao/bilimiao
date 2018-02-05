@@ -27,5 +27,6 @@ class BangumiResultAdapter(list : List<SearchBangumiInfo.DataBean.ItemsBean>)
         else
             helper?.setText(R.id.item_count, "${item?.newest_season}，更新至第${item?.total_count}话全")
         helper?.setText(R.id.item_details, item?.cat_desc)
+
     }
 }

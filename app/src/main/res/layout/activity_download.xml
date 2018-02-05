@@ -5,13 +5,22 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".activitys.DownloadActivity"
+    tools:context=".activitys.RegionTypeDetailsActivity"
     android:fitsSystemWindows="true"
     android:clipToPadding="true">
+    <!-- android:fitsSystemWindow = "true" 表示整个布局展示是整个屏幕出去状态栏,标题栏和导航栏剩下的区域-->
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <!--
+         app:expandedTitleMarginStart="10dp"
+        设置扩张时候(还没有收缩时)title离屏幕左边的距离
+
+         app:contentScrim="?attr/colorPrimary"
+        设置当完全CollapsingToolbarLayout折叠(收缩)后的背景颜色
+        -->
+        <!--标题-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -19,7 +28,9 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/ThemeOverlay.AppCompat"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:titleTextAppearance="@style/ToolBar.TitleText"/>
+            app:titleTextAppearance="@style/ToolBar.TitleText"
+            app:contentInsetStartWithNavigation="0dp"/>
+        <!--选项卡-->
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
@@ -31,12 +42,11 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/nsv"
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_view"
             android:layout_width="match_parent"

@@ -15,7 +15,6 @@ import com.a10miaomiao.bilimiao.entity.BangumiRankInfo
 import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
-import com.a10miaomiao.bilimiao.utils.log
 import com.a10miaomiao.bilimiao.views.LoadMoreView
 import com.a10miaomiao.bilimiao.views.RankOrdersPopupWindow
 import com.google.gson.Gson
@@ -107,13 +106,16 @@ class BangumiRankFragment: BaseFragment() {
                 onResponse = {
                     hideProgressBar()
                     try {
-                        var dataBean = Gson().fromJson(it, BangumiRankInfo::class.java)
+                        var m = it.indexOf("(")
+                        var n = it.lastIndexOf(")")
+                        var res = it.substring(m + 1,n)
+                        var dataBean = Gson().fromJson(res, BangumiRankInfo::class.java)
                         if (dataBean.code != 0) {
                             loadMoreView?.state = LoadMoreView.FAIL
                             return@newStringClient
                         }
                         archives.addAll(dataBean.result.list.filter {
-                            return@filter pKeywords.none { i -> it.title.indexOf(i) != -1 }
+                            return@filter pKeywords.none { i -> i.toUpperCase() in it.title.toUpperCase() }
                         })
                         for (i in 0..(archives.size - 1)) {
                             archives[i].sort_num = i + 1
@@ -121,7 +123,6 @@ class BangumiRankFragment: BaseFragment() {
                         mAdapter?.notifyDataSetChanged()
                     } catch (e: JsonSyntaxException) {
                         e.printStackTrace()
-                        log("----1----")
                         loadMoreView?.state = LoadMoreView.FAIL
                     }
                 },

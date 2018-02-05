@@ -19,13 +19,15 @@ import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.adapter.BangumiEpisodesAdapter
 import com.a10miaomiao.bilimiao.adapter.VideoPagesAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
+import com.a10miaomiao.bilimiao.dialog.DownloadDialog
 import com.a10miaomiao.bilimiao.entity.*
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
+import com.a10miaomiao.bilimiao.utils.FileUtil
+import com.a10miaomiao.bilimiao.utils.log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import com.gdlgxy.news.utils.FileUtil
 import kotlinx.android.synthetic.main.activity_info.*
 import kotlinx.android.synthetic.main.include_title_bar.*
 import java.util.regex.Pattern
@@ -75,6 +77,7 @@ class InfoActivity : BaseActivity() {
 
         if (mBundle.containsKey(Intent.EXTRA_TEXT)) {
             val text = mBundle.getString(Intent.EXTRA_TEXT)
+            log(text)
             findAid(text)
         }
 
@@ -88,7 +91,7 @@ class InfoActivity : BaseActivity() {
                 "av" -> {
                     detailsInfo = VideoDetailsInfo(aid)
                 }
-                "anime" -> {
+                "anime", "ss" -> {
                     detailsInfo = AnimeDetailsInfo(aid)
                 }
                 "live" -> {
@@ -130,7 +133,7 @@ class InfoActivity : BaseActivity() {
             saveImage()
         }
         img.setOnClickListener {
-            if(detailsInfo?.pic != null)
+            if (detailsInfo?.pic != null)
                 PhotoActivity.launch(activity, detailsInfo?.pic!!, fileName)
         }
 //        btn_openImg.setOnClickListener {
@@ -178,6 +181,9 @@ class InfoActivity : BaseActivity() {
      * 播主：Zelo-Balance http://live.bilibili.com/live/14047.html
      *
      * 【2018年1月新番介绍】童年回忆，京紫霸权？续作第二季 http://www.bilibili.com/read/cv99107
+     *
+     * 新版本番剧
+     * Slow Start, http://m.bilibili.com/bangumi/play/ss21675
      */
     private fun findAid(text: String) {
         var a = ""
@@ -206,6 +212,11 @@ class InfoActivity : BaseActivity() {
             detailsInfo = CvDetailsInfo(a)
             return
         }
+        a = getAid(text, ".*http://m.bilibili.com/bangumi/play/ss(\\d+)")
+        if (a != "") {
+            detailsInfo = AnimeDetailsInfo(a)
+            return
+        }
     }
 
     /**
@@ -232,8 +243,8 @@ class InfoActivity : BaseActivity() {
                 tv_title.text = it.title!!
 
                 //小彩蛋
-                fileName = if(detailsInfo!!.aidType == "av" && detailsInfo!!.aid == "170001") "男神"
-                    else "${detailsInfo?.aidType}${detailsInfo?.aid}"
+                fileName = if (detailsInfo!!.aidType == "av" && detailsInfo!!.aid == "170001") "男神"
+                else "${detailsInfo?.aidType}${detailsInfo?.aid}"
 
                 if (detailsInfo is AnimeDetailsInfo)
                     loadBangumiEpisodes()
@@ -302,24 +313,46 @@ class InfoActivity : BaseActivity() {
                 (detailsInfo as VideoDetailsInfo).pages
         )
         videoPagesAdapter?.setOnItemClickListener { adapter, view, position ->
-            DanmakuActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString())
+//            DanmakuActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString())
+            var type = (detailsInfo as VideoDetailsInfo).download_type
+            var aid = if(type == "anime")
+                (detailsInfo as VideoDetailsInfo).ep_id
+            else
+                detailsInfo!!.aid
+            var pages = (detailsInfo as VideoDetailsInfo).pages
+            var name = if(pages.size > 1)
+                detailsInfo!!.title!! + "-" + pages[position].title
+            else
+                detailsInfo!!.title!!
+            name = name.replace("/","|")
+            val dd = DownloadDialog.newInstance( (detailsInfo as VideoDetailsInfo).pages[position].cid.toString()
+                               , aid, name,type,detailsInfo!!.pic!!)
+            dd.show(this.supportFragmentManager,"InfoActivity->DownloadDialog")
         }
-        videoPagesAdapter?.setOnItemLongClickListener { adapter, view, position ->
-            val items_selector = arrayOf("查看播放地址")
-            AlertDialog.Builder(activity)
-                    .setItems(items_selector, { dialogInterface, n ->
-                        PlayInfoActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString())
-                    })
-                    .setCancelable(true)
-                    .show()
-            true
-        }
+//        videoPagesAdapter?.setOnItemLongClickListener { adapter, view, position ->
+//            val items_selector = arrayOf("查看播放地址")
+//            AlertDialog.Builder(activity)
+//                    .setItems(items_selector, { dialogInterface, n ->
+////                        PlayInfoActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString()
+////                                , detailsInfo!!.aid, detailsInfo!!.title!!)
+//                        DownloadService.add(activity, DownloadInfo(
+//                                cid = (detailsInfo as VideoDetailsInfo).pages[position].cid.toString(),
+//                                aid = detailsInfo!!.aid,
+//                                name = detailsInfo!!.title!!
+//                        ))
+//                        toast("添加成功")
+//                    })
+//                    .setCancelable(true)
+//                    .show()
+//            true
+//        }
         recycle_pages.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(activity, 2)
             adapter = videoPagesAdapter
         }
     }
+
 
     /**
      * 加载音频信息

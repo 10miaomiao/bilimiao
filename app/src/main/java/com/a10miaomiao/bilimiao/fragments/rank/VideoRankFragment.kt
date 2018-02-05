@@ -141,16 +141,11 @@ class VideoRankFragment : BaseFragment() {
                         }
                         archives.addAll(dataBean.list.filter {
                             for (i in pKeywords) {
-                                if (it.title.indexOf(i) != -1) {
+                                if (i.toUpperCase() in it.title.toUpperCase()) {
                                     return@filter false
                                 }
                             }
-                            for (i in pUppers) {
-                                if (it.mid == i.uid) {
-                                    return@filter false
-                                }
-                            }
-                            return@filter true
+                            return@filter pUppers.none { i -> it.mid == i.uid }
                         })
                         for (i in 0..(archives.size - 1)) {
                             archives[i].sort_num = i + 1

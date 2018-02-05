@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.widget.Toast
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
+import com.a10miaomiao.bilimiao.utils.FileUtil
 import com.a10miaomiao.bilimiao.utils.SystemBarHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import com.gdlgxy.news.utils.FileUtil
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity
 import kotlinx.android.synthetic.main.activity_photo.*
 

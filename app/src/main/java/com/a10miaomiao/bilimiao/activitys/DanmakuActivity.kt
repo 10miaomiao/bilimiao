@@ -9,7 +9,6 @@ import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.adapter.DanmakuAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.dialog.EditDialog
-import com.a10miaomiao.bilimiao.dialog.QueryUserDialog
 import com.a10miaomiao.bilimiao.entity.DanmakuInfo
 import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
@@ -98,17 +97,18 @@ class DanmakuActivity : BaseActivity() {
             adapter = mAdapter
         }
         mAdapter.setOnItemClickListener { adapter, view, position ->
-            var qud = QueryUserDialog()
-            val bundle = Bundle()
-            bundle.putString("hash", danmakus[position].id)
-            qud.arguments = bundle
-            qud.show(supportFragmentManager, "---")
+//            var qud = QueryUserDialog()
+//            val bundle = Bundle()
+//            bundle.putString("hash", danmakus[position].id)
+//            qud.arguments = bundle
+//            qud.show(supportFragmentManager, "---")
+            DanmakuDetailsActivity.launch(activity, danmakus[position].text,danmakus[position].id)
         }
     }
 
     private fun loadData() {
         swipe_ly?.isRefreshing = true
-        MiaoHttp.newClient<DanmakuInfo>(
+        MiaoHttp.newClient(
                 url = BiliApiService.getDanmakuList(cid),
                 parseNetworkResponse = {
                     DanmakuInfo.parse(
@@ -126,61 +126,6 @@ class DanmakuActivity : BaseActivity() {
                     toast("加载失败了(。_。)")
                 }
         )
-        /*val okHttpClient = OkHttpClient()
-        val request = okhttp3.Request.Builder()
-                .url(url)
-                .removeHeader("Content-Encoding")
-                .removeHeader("Content-Length")
-                .build()
-        okHttpClient.newCall(request)
-                .enqueue(object : Callback {
-                    override fun onFailure(call: Call?, e: IOException?) {
-
-                    }
-
-                    override fun onResponse(call: Call?, response: Response?) {
-                        val stream = ByteArrayInputStream(BiliDanmukuCompressionTools.decompressXML(response!!.body().bytes()))
-                        val info = DanmakuInfo.parse(stream)
-                        danmakus.addAll(info.danmakuList)
-                        mAdapter.notifyDataSetChanged()
-                        //log(response!!.body().string())
-                        //var stream = GZIPInputStream(response!!.body().byteStream())
-//                        var stream = DeflaterInputStream(response!!.body().byteStream())
-//                        //DanmakuInfo.parse(stream)
-//                        var reader = BufferedReader(InputStreamReader(stream,"utf-8"))
-//                        var sb = StringBuffer()
-//                        var str = reader.readLine()
-//                        while (str != null)
-//                        {
-//                            sb.append(str).append("\n")
-//                            str = reader.readLine()
-//                        }
-//                        val arrayOutputStream = ByteArrayOutputStream()
-//                        val buffer = ByteArray(1024)
-//                        var len= gzip.read(buffer)
-//                        while (len != -1) {
-//                            arrayOutputStream.write(buffer, 0, len)
-//                            len= gzip.read(buffer)
-//                        }
-//                        stream.close()
-//                        reader.close()
-//                        arrayOutputStream.close()
-//                        val str = String(arrayOutputStream.toByteArray())
-//                        log(sb.toString())
-                    }
-query, sign := EncodeSign(map[string]string{
-		"cid":            strconv.Itoa(cid),
-		"from":           "miniplay",
-		"player":         "1",
-		"otype":          "json",
-		"type":           "mp4",
-		"quality":        strconv.Itoa(quality),
-		"appkey":         "f3bb208b3d081dc8",
-	}, "1c15888dc316e05a15fdd0a02ed6584f")
-query = cid=26433217&from=miniplay&player=1&otype=json&type=mp4&quality=1&appkey=appkey
-sing = query+"1c15888dc316e05a15fdd0a02ed6584f"
-url := "htt://interface.bilibili.com/playurl?&" + query + "&sign=" + sign
-                })*/
     }
 
     override fun onBackPressed() {

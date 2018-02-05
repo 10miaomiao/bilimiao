@@ -1,5 +1,6 @@
 package com.a10miaomiao.bilimiao.adapter
 
+import android.util.TypedValue
 import android.widget.TextView
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.entity.BangumiRankInfo
@@ -24,18 +25,21 @@ class BangumiRankAdapter(list : List<BangumiRankInfo.BangumiInfo>)
 
         helper?.setText(R.id.item_title,item?.title)
         if(item?.is_finish == 1)//是否完结
-            helper?.setText(R.id.item_count, "${item?.newest_ep_index}话全")
+            helper?.setText(R.id.item_count, "已完结，全${item?.newest_ep_index}话")
         else
-            helper?.setText(R.id.item_count, "连载中，更新至第${item?.newest_ep_index}话全")
+            helper?.setText(R.id.item_count, "连载中，更新至第${item?.newest_ep_index}话")
         helper?.setText(R.id.item_details, "综合评分：${item?.pts}")
 
         var sort_num = helper!!.getView<TextView>(R.id.item_sort_num)
         sort_num.text = item!!.sort_num.toString()
-        if (item!!.sort_num <= 3)
-            sort_num.setTextColor(mContext.resources.getColor(R.color.colorAccent))
-        else
-            sort_num.setTextColor(mContext.resources.getColor(R.color.text_black))
-
+        sort_num.setTextColor(
+                if(item!!.sort_num <= 3) {
+                    val typedValue = TypedValue()
+                    mContext.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
+                    mContext.resources.getColor(typedValue.resourceId)
+                }else
+                    mContext.resources.getColor(R.color.text_black)
+        )
 
     }
 }

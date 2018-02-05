@@ -6,7 +6,8 @@ package com.a10miaomiao.bilimiao.utils
 object ConstantUtil {
     val EXTRA_PARTITION = "extra_partition"
     val EXTRA_RID = "extra_rid"
-    val DETAILS_INFO = "details_info"
+    val DATA = "data"
+    var INDEX = "index"
 
     val TIME_TYPE = "timeType"
 
@@ -31,6 +32,7 @@ object ConstantUtil {
     val DO = "do"
     val MID = "mid"
     val CID = "cid"
+    val REFERER = "referer"
     var PIC = "pic"
     val NAME = "name"
     var KETWORD = "keyword"

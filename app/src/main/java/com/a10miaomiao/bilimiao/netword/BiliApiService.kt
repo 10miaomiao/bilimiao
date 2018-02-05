@@ -16,16 +16,16 @@ object BiliApiService {
      * 获取视频信息
      */
     fun getVideoInfo(aid: String): String{
-        return "http://app.bilibili.com/x/view?_device=wp&_ulv=10000&access_key=&aid=$aid&appkey=${ApiHelper.appKey_Android}&build=411005&plat=4&platform=android&ts=${ApiHelper.GetTimeSpen()}"
+        return "http://app.bilibili.com/x/view?_device=wp&_ulv=10000&access_key=&aid=$aid&appkey=${ApiHelper.appKey_Android}&build=411005&plat=4&platform=android&ts=${ApiHelper.getTimeSpen()}"
     }
     /**
      * 获取番剧信息
      */
     fun getBangumiInfo(aid: String): String{
-        var url = "http://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.GetTimeSpen()}&type=bangumi"
+        var url = "http://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.getTimeSpen()}&type=bangumi"
         //var url = "http://bangumi.bilibili.com/api/season_v3?_device=wp&access_key=${ApiHelper.appKey_Android}&_ulv=10000&build=411005&platform=android&appkey=422fd9d7289a1dd9&ts=${ApiHelper.GetTimeSpen()}000&type=bangumi&season_id=$aid"
         //val url = "http://bangumi.bilibili.com/api/season_v4?access_key=19946e1ef3b5cad1a756c475a67185bb&actionKey=appkey&appkey=27eb53fc9058f8c3&build=3940&device=phone&mobi_app=iphone&platform=ios&season_id=$aid&sign=3e5d4d7460961d9bab5da2341fd98dc1&ts=1477898526&type=bangumi"
-        url += "&sign=" + ApiHelper.GetSign_Android(url)
+        url += "&sign=" + ApiHelper.getSign_Android(url)
         return url;
     }
 
@@ -35,7 +35,7 @@ object BiliApiService {
     fun getLiveInfo(aid: String): String{
         var url = "http://live.bilibili.com/AppRoom/index?_device=android&access_key=&appkey=${ApiHelper.appKey_Android}&build=434000&buld=434000&jumpFrom=24000&mobi_app=android&platform=android&room_id=$aid&scale=xxhdpi"
         //var url = "http://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.GetTimeSpen()}&type=bangumi"
-        url += "&sign=" + ApiHelper.GetSign_Android(url)
+        url += "&sign=" + ApiHelper.getSign_Android(url)
         return url
     }
 
@@ -116,6 +116,9 @@ object BiliApiService {
             else
                 "https://www.bilibili.com/index/rank/rookie-0$dayNum-$rid.json"
 
+    /**
+     * 番剧
+     */
     fun getRankBangumi(region: String,dayNum: Int) =
-            "https://bangumi.bilibili.com/jsonp/season_rank_list/$region/$dayNum.ver?_=${ApiHelper.GetTimeSpen()}"
+            "https://bangumi.bilibili.com/jsonp/season_rank_list/$region/$dayNum.ver?_=${ApiHelper.getTimeSpen()}"
 }

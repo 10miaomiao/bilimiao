@@ -178,7 +178,7 @@ class SearchResultFragment : BaseFragment() {
                         if (listSize < pageNum * pageSize && dataBean.data.items.archive != null) {
                             archives.addAll(dataBean.data.items.archive.filter {
                                 for (i in pKeywords) {
-                                    if (it.title.indexOf(i) != -1) {
+                                    if (i.toUpperCase() in it.title.toUpperCase()) {
                                         pNumber++
                                         return@filter false
                                     }

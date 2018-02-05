@@ -210,7 +210,7 @@ class RegionTypeDetailsFragment : BaseFragment() {
                         //屏蔽关键字
                         archives.addAll(dataBean.result.filter {
                             for (i in pKeywords) {
-                                if (it.title.indexOf(i) != -1) {
+                                if (i.toUpperCase() in it.title.toUpperCase()) {
                                     pNumber++
                                     return@filter false
                                 }

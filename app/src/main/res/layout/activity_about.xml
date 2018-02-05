@@ -49,6 +49,12 @@
                 android:layout_height="wrap_content"
                 android:text="B站：@10喵喵"
                 android:textColor="@color/subtitle_color"/>
+            <TextView
+                android:id="@+id/tv_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="https://10miaomiao.cn"
+                android:textColor="@color/subtitle_color"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -72,6 +78,35 @@
                 android:layout_margin="5dp"/>
             <TextView
                 android:id="@+id/tv_quote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/subtitle_color"
+                android:layout_margin="5dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="项目地址"
+                android:textColor="?attr/colorPrimary"
+                android:layout_margin="5dp"/>
+            <TextView
+                android:id="@+id/tv_addr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/subtitle_color"
+                android:layout_margin="5dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="感谢(排名不分先后)"
+                android:textColor="?attr/colorPrimary"
+                android:layout_margin="5dp"/>
+
+            <TextView
+                android:id="@+id/tv_donate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/subtitle_color"
