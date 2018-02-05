@@ -94,7 +94,19 @@ class DownloadService : Service() {
             downloading?.progress = it.progress
         }
         mDownloadManager.onResponse = {
+
             if(downloading != null){
+                var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/b站视频/"
+                if (downloading!!.count > 1){
+                    path += "${downloading!!.name}/"
+                    var file1 = File(path, downloading!!.making.toString() + downloading!!.videoType + ".temp")
+                    var file2 = File(path, downloading!!.making.toString() + downloading!!.videoType)
+                    file1.renameTo(file2)
+                }else{
+                    var file1 = File(path, downloading!!.fileName + ".temp")
+                    var file2 = File(path, downloading!!.fileName)
+                    file1.renameTo(file2)
+                }
                 downloading!!.making++
                 if(downloading!!.making >= downloading!!.count){
                     downloading!!.del()
@@ -102,11 +114,10 @@ class DownloadService : Service() {
                     db.upData(downloading!!)
                     nextDownload()
                 }else{
-                    var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/"
-                    FileUtil.isPath(path)
-                    path = FileUtil.isPath(path + "b站视频/")
-                    path = FileUtil.isPath(path + "${downloading!!.name}/")
-                    mDownloadManager.create(downloading!!, File(path, downloading!!.making.toString() + downloading!!.videoType))
+                    var len = downloading!!.progress
+                    downloading!!.progress = 0
+                    //newDownload()
+                    mDownloadManager.create(downloading!!, File(path, downloading!!.making.toString() + downloading!!.videoType + ".temp"), len)
                 }
             }
         }
@@ -190,10 +201,7 @@ class DownloadService : Service() {
                     if (matcher.find()) {
                         downloading!!.url = matcher.group(3)
                         downloading!!.length = matcher.group(1).toLong()
-                        log("hhhhhhhhhhhhhhhhhhhh")
-                        log(downloading!!.length)
                         downloading!!.size = matcher.group(2).toLong()
-                        log(downloading!!.size)
                         db.upData(downloading!!)
                         callback()
                     } else {
@@ -289,39 +297,19 @@ class DownloadService : Service() {
         db.upData(downloading!!)
         if (downloading!!.count > 1){
             path = FileUtil.isPath(path + "${downloading!!.name}/")
-            mDownloadManager.create(downloading!!, File(path, downloading!!.making.toString() + downloading!!.videoType))
+            var making = 0
+            var len = 0L
+            var f = File(path, making.toString() + downloading!!.videoType)
+            while (f.exists()){
+                len += f.length()
+                making++
+                f = File(path, making.toString() + downloading!!.videoType)
+            }
+            downloading!!.making = making
+            mDownloadManager.create(downloading!!, File(path, downloading!!.making.toString() + downloading!!.videoType + ".temp"), len)
         }else{
-            mDownloadManager.create(downloading!!, File(path, downloading!!.fileName))
+            mDownloadManager.create(downloading!!, File(path, downloading!!.fileName + ".temp"))
         }
-//        call = OkHttpUtils.get()
-//                .tag(this)
-//                .headers(downloading!!.header!!)
-//                .url(url)
-//                .build()
-//        call!!.execute(object : FileCallBack(path, fileName)
-//                {
-//                    override fun inProgress(progress: Float, total: Long, id: Int) {
-//                        downloading?.progress = progress
-//                    }
-//                    override fun onError(call: Call, e: java.lang.Exception, id: Int) {
-//                        if(call.isCanceled)
-//                            return
-//                        if(downloading != null){
-//                            downloading!!.status = DownloadInfo.FAIL
-//                            db.upData(downloading!!)
-//                            nextDownload()
-//                        }
-//                    }
-//                    override fun onResponse(response: File, id: Int) {
-//                        if (url == urls[urls.size - 1]){
-//                            db.delete(downloading!!.cid)
-//                            db2.insert(downloading!!)
-//                            nextDownload()
-//                        }else{
-//                            startDownload()
-//                        }
-//                    }
-//                })
     }
 
 

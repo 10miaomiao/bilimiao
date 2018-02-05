@@ -176,7 +176,7 @@ class RegionTypeDetailsFragment : BaseFragment() {
     private fun reTime(): Boolean {
         val selectorDateUtil = SelectorDateUtil(activity)
         if (timeFrom != null || timeTo != null) {
-            if (timeFrom === selectorDateUtil.timeFrom && timeTo === selectorDateUtil.timeTo) {
+            if (timeFrom == selectorDateUtil.timeFrom && timeTo == selectorDateUtil.timeTo) {
                 selector_date?.text = SelectorDateUtil.formatDate(timeFrom!!, "-") + "至" +
                         SelectorDateUtil.formatDate(timeTo!!, "-")
                 return false

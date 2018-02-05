@@ -56,7 +56,7 @@ class DownloadingFragment : BaseFragment() {
                     .setItems(arrayOf("取消下载"), { dialogInterface, i ->
                         DownloadService.del(activity, list[i].cid)
                         var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/b站视频/"
-                        var f1 = File(path + list[i].fileName)
+                        var f1 = File(path + list[i].fileName + ".temp")
                         var f2 = File(path + list[i].name + "/")
                         if (f1.exists()) {
                             f1.delete()

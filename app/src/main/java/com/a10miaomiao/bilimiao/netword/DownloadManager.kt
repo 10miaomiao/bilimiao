@@ -17,18 +17,16 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 
-
-
 /**
  * Created by 10喵喵 on 2018/1/29.
  */
 class DownloadManager {
     private var mClient: OkHttpClient? = null
 
-    private var call : Call? = null
+    private var call: Call? = null
 
-    var onResponse: ((info: DownloadInfo) -> Unit)? = null
-    var onError: ((e: Exception) -> Unit)? = null
+    var onResponse: (() -> Unit)? = null
+    var onError: (() -> Unit)? = null
     var inProgress: ((info: DownloadInfo) -> Unit)? = null
     var mObservable: Subscription? = null
 
@@ -43,14 +41,14 @@ class DownloadManager {
     /**
      * 创建下载
      */
-    fun create(downloadInfo: DownloadInfo,file: File){
+    fun create(downloadInfo: DownloadInfo, file: File,downloadLength: Long = 0) {
         mObservable = Observable.just(downloadInfo)
-                .flatMap {Observable.create(DownloadSubscribe(it,file))}
+                .flatMap { Observable.create(DownloadSubscribe(it, file,downloadLength)) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<DownloadInfo>() {
                     override fun onCompleted() {
-
+                        onResponse?.invoke()
                     }
 
                     override fun onNext(t: DownloadInfo?) {
@@ -58,74 +56,58 @@ class DownloadManager {
                     }
 
                     override fun onError(e: Throwable?) {
-
+                        e?.printStackTrace()
+                        onError?.invoke()
                     }
                 })
-//        mObservable = Observable.create(DownloadSubscribe(downloadInfo))
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : Subscriber<DownloadInfo>() {
-//                    override fun onCompleted() {
-//
-//                    }
-//
-//                    override fun onNext(t: DownloadInfo?) {
-//                        inProgress?.invoke(t!!)
-//                    }
-//
-//                    override fun onError(e: Throwable?) {
-//
-//                    }
-//                })
     }
 
     /**
      * 取消下载
      */
-    fun cancel(){
+    fun cancel() {
         call?.cancel()
         mObservable?.unsubscribe()
     }
 
-     inner class DownloadSubscribe(var info: DownloadInfo,var file: File) : Observable.OnSubscribe<DownloadInfo> {
+    inner class DownloadSubscribe(var info: DownloadInfo, var file: File,var downloadedLength: Long) : Observable.OnSubscribe<DownloadInfo> {
         override fun call(t: Subscriber<in DownloadInfo>) {
-            if(file.exists()){
+            if (file.exists()) {
                 info.progress = file.length()
             }
             var downloadLength = info.progress//已经下载好的长度
-            var contentLength = getContentLength(info.url)
-            if (contentLength > 0)
-                info.size = contentLength
-            else
-                contentLength =info.size
+            log("downloadLength",downloadLength)
+//            var contentLength = getContentLength(info.url)
+//            if (contentLength > 0)
+//                info.size = contentLength
+//            else
+//                contentLength = info.size
             //初始进度信息
             //t.onNext(info)
             val request = Request.Builder()
                     .url(info.url)
-
-            if(downloadLength > 0){
-                request.addHeader("RANGE", "bytes=$downloadLength-$contentLength")
+            log(info.making)
+            log(info.url)
+            if (downloadLength > 0) {
+                request.addHeader("RANGE", "bytes=$downloadLength-${info.size}")
             }
-
-            for (keys in info.header!!.keys){
-                request.addHeader(keys,info.header!![keys])
+            downloadLength += downloadedLength
+            for (keys in info.header!!.keys) {
+                request.addHeader(keys, info.header!![keys])
             }
-
             call = mClient!!.newCall(request.build())
-            //downCalls.put(url, call)//把这个添加到call里,方便取消
             val response = call!!.execute()
-
-            log(response.isSuccessful.toString())
-            log(response.code())
-            var headers = response.headers()
-            for(header in headers.names()){
-                log(header,headers[header])
+            log("-------------------------------------")
+            if (!response.isSuccessful) {
+                log(response.code())
+                t.onError(Throwable())
+                return
             }
-
+            log("-------------------------------------")
             var fileOutputStream: FileOutputStream? = null
             try {
                 val `is` = response.body().byteStream()
-                val bis = BufferedInputStream( `is` )
+                val bis = BufferedInputStream(`is`)
                 fileOutputStream = FileOutputStream(file, true)
                 var buffer = ByteArray(2048)//缓冲数组2kB
                 var len: Int = bis.read(buffer)
@@ -138,47 +120,38 @@ class DownloadManager {
                     len = bis.read(buffer)
                 }
                 fileOutputStream.flush()
-                Observable.create(Observable.OnSubscribe<DownloadInfo> {it.onNext(info)})
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            onResponse?.invoke(it)
-                        })
-                //downCalls.remove(url)
-            } catch (e : IOException) {
+                t.onCompleted()
+            } catch (e: IOException) {
                 e.printStackTrace()
-                Observable.create(Observable.OnSubscribe<IOException> {it.onNext(e)})
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            onError?.invoke(it)
-                        })
+                t.onError(Throwable())
             }
         }
-    }
 
-    /**
-     * 获取下载长度
-     *
-     * @param downloadUrl
-     * @return
-     */
-    private fun getContentLength(downloadUrl: String): Long {
-        val request = Request.Builder()
-                .url(downloadUrl)
-                .build()
-        try {
-            val call = mClient!!.newCall(request)
-            var response = call.execute()
-            if (response != null && response.isSuccessful) {
-                val contentLength = response.body().contentLength()
-                call.cancel()
-                log("contentLength",contentLength)
-                return if (contentLength == 0L) -1 else contentLength
+        /**
+         * 获取下载长度
+         *
+         * @param downloadUrl
+         * @return
+         */
+        private fun getContentLength(downloadUrl: String): Long {
+            val request = Request.Builder()
+                    .url(downloadUrl)
+                    .build()
+            try {
+                val call = mClient!!.newCall(request)
+                var response = call.execute()
+                log("----response----")
+                if (response != null && response.isSuccessful) {
+                    val contentLength = response.body().contentLength()
+                    call.cancel()
+                    log("contentLength", contentLength)
+                    return if (contentLength == 0L) -1 else contentLength
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
+            log("----读取长度失败----")
+            return -1
         }
-        return -1
     }
 }
