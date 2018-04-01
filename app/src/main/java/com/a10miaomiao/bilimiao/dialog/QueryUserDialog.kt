@@ -29,7 +29,7 @@ class QueryUserDialog : DialogFragment() {
         loadData()
         btn_view.setOnClickListener {
             if (uid != null) {
-                IntentHandlerUtil.openWithPlayer(activity,"https://space.bilibili.com/$uid/")
+                IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_AUTHOR, uid.toString())
             }
             dismiss()
         }

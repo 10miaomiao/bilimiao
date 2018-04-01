@@ -1,6 +1,7 @@
 package com.a10miaomiao.bilimiao.activitys
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.widget.GridLayoutManager
@@ -12,8 +13,10 @@ import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.adapter.HomeRegionItemAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.dialog.SearchBoxFragment
+import com.a10miaomiao.bilimiao.entity.HomeRegionInfo
 import com.a10miaomiao.bilimiao.entity.RegionTypesInfo
 import com.a10miaomiao.bilimiao.utils.SelectorDateUtil
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import rx.Observable
@@ -24,6 +27,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 
 /**
@@ -34,28 +38,38 @@ class MainActivity : BaseActivity() {
     var info: Info? = null
     var searchFragment = SearchBoxFragment.newInstance()
 
+    var homeRegionList = ArrayList<HomeRegionInfo>()
+    var homeRegionAdapter: HomeRegionItemAdapter? = null
     override var layoutResID = R.layout.activity_main
 
     override fun initViews(savedInstanceState: Bundle?) {
         //searchClipboard()
-        val mAdapter = HomeRegionItemAdapter()
+        homeRegionAdapter = HomeRegionItemAdapter(homeRegionList)
         recycle_region.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(activity, 5)
-            adapter = mAdapter
+            adapter = homeRegionAdapter
         }
-        mAdapter.setOnItemClickListener { adapter, view, position ->
+        homeRegionAdapter!!.setOnItemClickListener { adapter, view, position ->
             RegionTypeDetailsActivity.launch(activity, regionTypes[position])
         }
+
         searchFragment.onSearchClick = {
-            var d = search(it)
-            if (d == null) {
-                SearchActivity.launch(activity, it)
-                true
-            } else {
-                InfoActivity.launch(activity, d.aid, d.type)
-                true
+            if (it == "/封印解除") {
+                ThemeHelper.setTheme(activity, 6)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                finish()
+                overridePendingTransition(0, 0)
+                startActivity(Intent(this, MainActivity::class.java))
+            }else{
+                var d = search(it)
+                if (d == null) {
+                    SearchActivity.launch(activity, it)
+                } else {
+                    InfoActivity.launch(activity, d.aid, d.type)
+                }
             }
+            true
         }
 
         find_card_view.setOnClickListener {
@@ -74,7 +88,7 @@ class MainActivity : BaseActivity() {
         iv_more.setOnClickListener {
             val popupMenu = PopupMenu(activity, it)
             popupMenu.inflate(R.menu.main)
-            popupMenu.setOnMenuItemClickListener (this::onMenuItemClick)
+            popupMenu.setOnMenuItemClickListener(this::onMenuItemClick)
             popupMenu.show()
         }
         btn_time_line.setOnClickListener {
@@ -88,6 +102,11 @@ class MainActivity : BaseActivity() {
         }
         btn_downlaod.setOnClickListener {
             DownloadActivity.launch(activity)
+        }
+
+        mButton.setOnClickListener {
+            var mIntent = Intent(activity, PlayerActivity::class.java)
+            startActivity(mIntent)
         }
         searchClipboard()
         setRegionCard()
@@ -104,6 +123,10 @@ class MainActivity : BaseActivity() {
         val random = Random()
         title_region.text = titles[random.nextInt(titles.size)]
         subtitle_region.text = subtitle_titles[random.nextInt(titles.size)]
+        //分区列表
+        homeRegionList.clear()
+        homeRegionList.addAll(HomeRegionInfo.create(activity))
+        homeRegionAdapter?.notifyDataSetChanged()
         //读取分区列表
         Observable.just(readAssetsJson())
                 .compose(bindToLifecycle())
@@ -250,8 +273,8 @@ class MainActivity : BaseActivity() {
     /**
      * 菜单项单击
      */
-    fun onMenuItemClick(item: MenuItem): Boolean{
-        when(item.itemId){
+    fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.setting -> SettingActivity.launch(activity)
             R.id.theme -> ThemePickerActivity.launch(activity)
         }

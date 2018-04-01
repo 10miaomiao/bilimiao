@@ -106,7 +106,7 @@ class DownloadManager {
             log("-------------------------------------")
             var fileOutputStream: FileOutputStream? = null
             try {
-                val `is` = response.body().byteStream()
+                val `is` = response.body()!!.byteStream()
                 val bis = BufferedInputStream(`is`)
                 fileOutputStream = FileOutputStream(file, true)
                 var buffer = ByteArray(2048)//缓冲数组2kB
@@ -142,7 +142,7 @@ class DownloadManager {
                 var response = call.execute()
                 log("----response----")
                 if (response != null && response.isSuccessful) {
-                    val contentLength = response.body().contentLength()
+                    val contentLength = response.body()!!.contentLength()
                     call.cancel()
                     log("contentLength", contentLength)
                     return if (contentLength == 0L) -1 else contentLength

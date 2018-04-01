@@ -81,7 +81,7 @@
         <activity android:name="com.a10miaomiao.bilimiao.activitys.DanmakuDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name="com.a10miaomiao.bilimiao.activitys.PlayInfoActivity"
+        <activity android:name="com.a10miaomiao.bilimiao.activitys.PlayerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name="com.a10miaomiao.bilimiao.activitys.RankActivity"

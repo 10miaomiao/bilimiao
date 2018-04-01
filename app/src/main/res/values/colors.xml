@@ -69,4 +69,8 @@
     <color name="red">#F44336</color>
     <color name="red_dark">#C62828</color>
     <color name="red_trans">#99F44336</color>
+
+    <color name="nightColorPrimary">#3b3b3b</color>
+    <color name="nightColorPrimaryDark">#383838</color>
+    <color name="nightColorAccent">#fb7299</color>
 </resources>

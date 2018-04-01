@@ -38,7 +38,7 @@ class DownloadActivity : BaseActivity() {
 
     override fun initToolBar() {
         toolbar.title = "下载姬（测试版）"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
             finish()
         }

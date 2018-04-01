@@ -41,7 +41,7 @@ class SelectorDateActivity : BaseActivity() {
 
     override fun initToolBar() {
         toolbar.title = "设置时间线"
-        toolbar.setNavigationIcon(R.mipmap.ic_ok)
+        toolbar.setNavigationIcon(R.drawable.ic_check_white_24dp)
         toolbar.setNavigationOnClickListener {
             if (saveDate())
                 finish()

@@ -42,4 +42,14 @@
         <item name="colorAccent">@color/purple</item>
         <item name="android:navigationBarColor">@color/purple</item>
     </style>
+
+    <style name="NightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/nightColorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
+        <item name="colorAccent">@color/pink</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:navigationBarColor">@color/nightColorPrimaryDark</item>
+        <item name="android:background">@color/nightColorPrimaryDark</item>
+        <item name="cardBackgroundColor">@color/nightColorPrimaryDark</item>
+    </style>
 </resources>

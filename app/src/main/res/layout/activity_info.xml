@@ -211,7 +211,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:text="弹幕列表(o゜▽゜)o☆" />
+                        android:text="分P列表(o゜▽゜)o☆" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recycle_pages"

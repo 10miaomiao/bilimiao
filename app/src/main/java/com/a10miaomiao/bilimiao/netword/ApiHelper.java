@@ -30,7 +30,6 @@ public class ApiHelper {
         Date date = new Date();
         return date.getTime();
     }
-
     public static String getSing(String url,String secret){
         String result;
         String str = url.substring(url.indexOf("?", 4) + 1);

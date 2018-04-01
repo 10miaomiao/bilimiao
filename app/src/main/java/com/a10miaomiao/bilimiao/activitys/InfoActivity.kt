@@ -65,7 +65,7 @@ class InfoActivity : BaseActivity() {
             toolbar.title = "${detailsInfo!!.aidType}${detailsInfo!!.aid}"
         else
             toolbar.title = "查看b站封面"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -313,20 +313,28 @@ class InfoActivity : BaseActivity() {
                 (detailsInfo as VideoDetailsInfo).pages
         )
         videoPagesAdapter?.setOnItemClickListener { adapter, view, position ->
-//            DanmakuActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString())
-            var type = (detailsInfo as VideoDetailsInfo).download_type
-            var aid = if(type == "anime")
-                (detailsInfo as VideoDetailsInfo).ep_id
+            val info = detailsInfo as VideoDetailsInfo
+            val pages = info.pages
+            var entry = DownEntryInfo(
+                    av_id = info.aid,
+                    cover = info.pic!!,
+                    title = info.title!!,
+                    video_type = info.download_type,
+                    cid = pages[position].cid.toString()
+            )
+            if(info.download_type == "anime"){
+                entry.ep_id = info.ep_id
+                entry.season_cover = info.season_cover
+                entry.season_id = info.season_id
+                entry.season_cover = info.season_cover
+                entry.season_title = info.season_title
+            }
+            entry.title = if(pages.size > 1)
+                entry.title + "-" + pages[position].title
             else
-                detailsInfo!!.aid
-            var pages = (detailsInfo as VideoDetailsInfo).pages
-            var name = if(pages.size > 1)
-                detailsInfo!!.title!! + "-" + pages[position].title
-            else
-                detailsInfo!!.title!!
-            name = name.replace("/","|")
-            val dd = DownloadDialog.newInstance( (detailsInfo as VideoDetailsInfo).pages[position].cid.toString()
-                               , aid, name,type,detailsInfo!!.pic!!)
+                entry.title
+            entry.title = entry.title.replace("/","|")
+            val dd = DownloadDialog.newInstance(entry)
             dd.show(this.supportFragmentManager,"InfoActivity->DownloadDialog")
         }
 //        videoPagesAdapter?.setOnItemLongClickListener { adapter, view, position ->

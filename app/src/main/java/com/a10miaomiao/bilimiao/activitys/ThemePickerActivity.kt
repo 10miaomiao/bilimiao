@@ -25,13 +25,16 @@ class ThemePickerActivity : BaseActivity(){
             ThemePickerInfo(R.color.green_light, "早苗绿"),
             ThemePickerInfo(R.color.blue, "胖次蓝"),
             ThemePickerInfo(R.color.purple, "基佬紫")
+            //ThemePickerInfo(R.color.nightColorPrimary, "高级黑  慎重使用(lll￢ω￢)")
     )
     val mAdapter by lazy {
         ThemePickerAdapter(list)
     }
 
     override fun initViews(savedInstanceState: Bundle?) {
-        list[ThemeHelper.getTheme(activity)].isSelected = true
+        var theme = ThemeHelper.getTheme(activity)
+        if(theme < list.size)
+            list[theme].isSelected = true
         recycle.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
@@ -54,7 +57,7 @@ class ThemePickerActivity : BaseActivity(){
 
     override fun initToolBar() {
         toolbar.title = "选择主题"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
             finish()
         }

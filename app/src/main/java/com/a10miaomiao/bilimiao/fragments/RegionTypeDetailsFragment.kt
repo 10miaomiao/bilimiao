@@ -3,7 +3,6 @@ package com.a10miaomiao.bilimiao.fragments
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
-import android.util.TypedValue
 import android.view.View
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.activitys.InfoActivity
@@ -17,16 +16,11 @@ import com.a10miaomiao.bilimiao.db.PreventUpperDB
 import com.a10miaomiao.bilimiao.entity.RegionTypeDetailsInfo
 import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
-import com.a10miaomiao.bilimiao.utils.ConstantUtil
-import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
-import com.a10miaomiao.bilimiao.utils.SelectorDateUtil
-import com.a10miaomiao.bilimiao.utils.log
+import com.a10miaomiao.bilimiao.utils.*
 import com.a10miaomiao.bilimiao.views.LoadMoreView
 import com.a10miaomiao.bilimiao.views.RankOrdersPopupWindow
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_region_details.*
-
-
 
 
 /**
@@ -103,17 +97,15 @@ class RegionTypeDetailsFragment : BaseFragment() {
             SelectorDateActivity.launch(activity)
         }
 
-        val typedValue = TypedValue()
-        activity.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-        swipe_ly.setColorSchemeResources(typedValue.resourceId, typedValue.resourceId,
-                typedValue.resourceId, typedValue.resourceId)
+//        val typedValue = TypedValue()
+//        activity.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
+//        swipe_ly.setColorSchemeResources(typedValue.resourceId, typedValue.resourceId,
+//                typedValue.resourceId, typedValue.resourceId)
+        val color = ThemeHelper.getColorAccent(context)
+        swipe_ly.setColorSchemeResources(color, color,color, color)
+
 
         swipe_ly.setOnRefreshListener({
-            //            Observable.timer(1000, TimeUnit.MILLISECONDS)
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe({aLong ->
-//                        hideProgressBar()
-//                     })
             clearList()
             loadData()
         })
@@ -129,10 +121,10 @@ class RegionTypeDetailsFragment : BaseFragment() {
             adapter = mAdapter
         }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, "http://www.bilibili.com/video/av${archives[position].id}/")
+            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].id)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
-            val items_selector = arrayOf("查看封面", "修改默认播放器")
+            val items_selector = arrayOf("查看封面")
             AlertDialog.Builder(activity)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {

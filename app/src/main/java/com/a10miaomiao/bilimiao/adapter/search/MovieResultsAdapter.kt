@@ -1,0 +1,25 @@
+package com.a10miaomiao.bilimiao.adapter.search
+
+import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.entity.SearchMovieInfo
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.BaseViewHolder
+
+/**
+ * Created by 10喵喵 on 2018/2/13.
+ */
+class MovieResultsAdapter(list : List<SearchMovieInfo.DataBean.ItemsBean>)
+    : BaseQuickAdapter<SearchMovieInfo.DataBean.ItemsBean, BaseViewHolder>(R.layout.item_search_bangumi,list) {
+    override fun convert(helper: BaseViewHolder?, item: SearchMovieInfo.DataBean.ItemsBean?) {
+        Glide.with(mContext)
+                .load(item?.cover)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.bili_default_image_tv)
+                .dontAnimate()
+                .into(helper?.getView(R.id.item_img))
+        helper?.setText(R.id.item_title,item?.title)
+    }
+}

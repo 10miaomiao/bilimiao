@@ -17,7 +17,7 @@ import org.json.JSONTokener
 /**
  * Created by 10喵喵 on 2018/1/26.
  */
-class DanmakuDetailsActivity : BaseActivity(){
+class DanmakuDetailsActivity : BaseActivity() {
     override var layoutResID = R.layout.activity_danmaku_details
 
     private val hash by lazy {
@@ -63,7 +63,7 @@ class DanmakuDetailsActivity : BaseActivity(){
 
         btn_view.setOnClickListener {
             if (uid != null) {
-                IntentHandlerUtil.openWithPlayer(activity,"https://space.bilibili.com/$uid/")
+                IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_AUTHOR, uid.toString())
             }
         }
     }

@@ -9,8 +9,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         applicationId "com.a10miaomiao.bilimiao"
-        versionCode 15
-        versionName "1.2.0 beta"
+        versionCode 20
+        versionName "1.2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,10 +18,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
     }
 }
 
@@ -45,7 +41,8 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.1'
 
     //compile 'com.zhy:okhttputils:2.6.2'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    //compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
 
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
     compile 'com.trello:rxlifecycle-components:0.6.1'
@@ -54,7 +51,10 @@ dependencies {
 
     compile 'com.gcssloop.widget:rclayout:1.4.1@aar'
 
-    //compile 'com.bilibili:magicasakura:0.1.8@aar'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
 }
 repositories {
     mavenCentral()

@@ -14,6 +14,7 @@ import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.BiliDanmukuCompressionTools
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
+import com.a10miaomiao.bilimiao.utils.FileUtil
 import com.a10miaomiao.bilimiao.utils.log
 import kotlinx.android.synthetic.main.activity_uper_video_list.*
 import kotlinx.android.synthetic.main.include_title_bar.*
@@ -36,6 +37,8 @@ class DanmakuActivity : BaseActivity() {
     }
     var isFilter = false
 
+    var danmakuData: ByteArray? = null
+
     override fun initViews(savedInstanceState: Bundle?) {
         initRecyclerView()
         loadData()
@@ -52,18 +55,36 @@ class DanmakuActivity : BaseActivity() {
 
     override fun initToolBar() {
         toolbar.title = "弹幕列表"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-        toolbar.inflateMenu(R.menu.search)
+        toolbar.inflateMenu(R.menu.danmaku)
         toolbar.setOnMenuItemClickListener {
-            var ed = EditDialog()
-            ed.arguments = Bundle().apply {
-                putString("hint", "多个关键字可用空格分开")
+            when(it.itemId){
+                R.id.search -> {
+                    var ed = EditDialog()
+                    ed.arguments = Bundle().apply {
+                        putString("hint", "多个关键字可用空格分开")
+                    }
+                    ed.show(supportFragmentManager, "DanmakuActivity->EditDialog")
+                    ed.onFinishInput = this::onFinishInput
+                }
+                R.id.save ->{
+                    if(danmakuData != null){
+                        try {
+                            var fileName = FileUtil("弹幕文件")
+                                    .saveText(danmakuData!!,cid + ".xml")
+                                    .fileName
+                            toast("已投喂到$fileName")
+                        }catch (e: Exception){
+                            toast("保存失败")
+                        }
+                    }else{
+                        toast("弹幕还没加载出来呢(￣▽￣)")
+                    }
+                }
             }
-            ed.show(supportFragmentManager, "DanmakuActivity->EditDialog")
-            ed.onFinishInput = this::onFinishInput
             true
         }
     }
@@ -76,13 +97,7 @@ class DanmakuActivity : BaseActivity() {
         toolbar.title = "筛选“$text”"
         danmakus.clear()
         danmakus.addAll(danmakuList.filter {
-            var b = true
-            for (key in keywords) {
-                if (it.text.indexOf(key) == -1) {
-                    b = false
-                }
-            }
-            b
+            keywords.any { key -> key.toUpperCase() in it.text.toUpperCase() }
         })
         for (dan in danmakus)
             log(dan.text)
@@ -111,9 +126,8 @@ class DanmakuActivity : BaseActivity() {
         MiaoHttp.newClient(
                 url = BiliApiService.getDanmakuList(cid),
                 parseNetworkResponse = {
-                    DanmakuInfo.parse(
-                            ByteArrayInputStream(BiliDanmukuCompressionTools.decompressXML(it.body().bytes()))
-                    )
+                    danmakuData = BiliDanmukuCompressionTools.decompressXML(it.body()!!.bytes())
+                    DanmakuInfo.parse(ByteArrayInputStream(danmakuData))
                 },
                 onResponse = {
                     swipe_ly?.isRefreshing = false

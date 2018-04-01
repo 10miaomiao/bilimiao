@@ -1,10 +1,10 @@
 package com.a10miaomiao.bilimiao.adapter
 
-import android.util.TypedValue
 import android.widget.TextView
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.entity.VideoRankInfo
 import com.a10miaomiao.bilimiao.utils.NumberUtil
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -33,9 +33,8 @@ class VideoRankAdapter(list: List<VideoRankInfo.VideoInfo>)
         sort_num.text = item!!.sort_num.toString()
         sort_num.setTextColor(
                 if(item!!.sort_num <= 3) {
-                    val typedValue = TypedValue()
-                    mContext.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-                    mContext.resources.getColor(typedValue.resourceId)
+                    val color = ThemeHelper.getColorAccent(mContext)
+                    mContext.resources.getColor(color)
                 }else
                     mContext.resources.getColor(R.color.text_black)
         )

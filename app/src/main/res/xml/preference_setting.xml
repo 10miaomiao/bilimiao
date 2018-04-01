@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="常规">
-        <Preference
-            android:key="player"
-            android:summary="当前播放器：哔哩哔哩"
-            android:title="选择播放器" />
+        <!--<Preference-->
+        <!--android:key="player"-->
+        <!--android:summary="当前播放器：哔哩哔哩"-->
+        <!--android:title="选择播放器"-->
+        <!--/>-->
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="请选择客户端类型"
+            android:entries="@array/bili_client_type_name"
+            android:entryValues="@array/bili_client_type_val"
+            android:key="bili_client_type"
+            android:summary="调用客户端下载时，将使用该客户端"
+            android:title="选择客户端类型" />
 
         <Preference
             android:key="theme"
@@ -13,31 +23,35 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="强迫症选项">
-       <SwitchPreference
-           android:key="home_time_line"
-           android:defaultValue="true"
-           android:title="主页设置时间线卡片"
-           android:summaryOff="已隐藏"
-           android:summaryOn="已显示"
-            />
         <SwitchPreference
-            android:key="region_time_line"
             android:defaultValue="true"
+            android:key="home_time_line"
+            android:summaryOff="已隐藏"
+            android:summaryOn="已显示"
+            android:title="主页设置时间线卡片" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="region_time_line"
             android:summaryOff="已隐藏"
             android:summaryOn="已显示"
             android:title="分区详情页设置时间页" />
+        <SwitchPreference
+            android:key="region_ico_new"
+            android:defaultValue="false"
+            android:summaryOff=""
+            android:summaryOn=""
+            android:title="使用新版图标" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="其它">
         <Preference
-            android:title="关于"
+            android:key="about"
             android:summary="版本"
-            android:key="about">
-        </Preference>
+            android:title="关于"></Preference>
         <Preference
-            android:title="捐助"
+            android:key="donate"
             android:summary="开发者想买内存条"
-            android:key="donate"/>
+            android:title="捐助" />
     </PreferenceCategory>
 
 </PreferenceScreen>

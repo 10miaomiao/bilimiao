@@ -15,6 +15,7 @@ import com.a10miaomiao.bilimiao.db.PreventUpperDB
 import com.a10miaomiao.bilimiao.entity.VideoRankInfo
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.a10miaomiao.bilimiao.views.LoadMoreView
 import com.a10miaomiao.bilimiao.views.RankOrdersPopupWindow
 import com.google.gson.Gson
@@ -63,10 +64,10 @@ class VideoRankFragment : BaseFragment() {
             adapter = mAdapter
         }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, "http://www.bilibili.com/video/av${archives[position].aid}/")
+            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].aid)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
-            val items_selector = arrayOf("查看封面", "修改默认播放器")
+            val items_selector = arrayOf("查看封面")
             AlertDialog.Builder(activity)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {
@@ -85,12 +86,8 @@ class VideoRankFragment : BaseFragment() {
 
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-        swipe_ly.setColorSchemeResources(typedValue.resourceId, typedValue.resourceId,
-                typedValue.resourceId, typedValue.resourceId)
-        swipe_ly.setOnRefreshListener({
-            clearList()
-            loadData()
-        })
+        val color = ThemeHelper.getColorAccent(context)
+        swipe_ly.setColorSchemeResources(color, color,color, color)
 
         ddm_rank.popMenu = RankOrdersPopupWindow(activity, line, arrayOf("全部投稿", "近期投稿"))
         ddm_rank.popMenu?.onCheckItemPositionChanged = { text, position ->

@@ -31,15 +31,13 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-
-
 /**
  * Created by 10喵喵 on 2018/1/9.
  */
 class DownloadService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     private var manager: NotificationManager? = null
-//    private var mNotification: Notification? = null
+    //    private var mNotification: Notification? = null
     private var mBuilder: NotificationCompat.Builder? = null
 
 //    var list = ArrayList<DownloadInfo>()
@@ -57,7 +55,7 @@ class DownloadService : Service() {
         manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val mIntent = Intent(this, DownloadActivity::class.java)// 点击跳转到指定页面
         val pIntent = PendingIntent.getActivity(this, 0, mIntent, 0)
-        mBuilder  = NotificationCompat.Builder(this)
+        mBuilder = NotificationCompat.Builder(this)
         mBuilder!!.setContentTitle("准备下载")
                 .setContentText("已下载0.00%")
                 .setContentIntent(pIntent)
@@ -67,7 +65,7 @@ class DownloadService : Service() {
         Observable.interval(800, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ aLong ->
-                    if(downloading != null){
+                    if (downloading != null) {
                         try {
                             val intent = Intent(DownloadService.ACTION_UPDATE)
                             intent.putExtra(ConstantUtil.DATA, downloading!!)
@@ -79,14 +77,14 @@ class DownloadService : Service() {
                             val fnum = DecimalFormat("##0.00")
                             mBuilder!!.setContentTitle(downloading!!.name)
                                     .setContentText("已下载${fnum.format(progress)}%")
-                                    .setProgress(100,progress.toInt(),false)
+                                    .setProgress(100, progress.toInt(), false)
                             manager!!.notify(0, mBuilder!!.build())
                             //downloading!!.save()
-                        }catch (e: Exception){
+                        } catch (e: Exception) {
                             e.printStackTrace()
                         }
 
-                    }else{
+                    } else {
                         manager?.cancel(0)
                     }
                 })
@@ -95,25 +93,25 @@ class DownloadService : Service() {
         }
         mDownloadManager.onResponse = {
 
-            if(downloading != null){
+            if (downloading != null) {
                 var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/b站视频/"
-                if (downloading!!.count > 1){
+                if (downloading!!.count > 1) {
                     path += "${downloading!!.name}/"
                     var file1 = File(path, downloading!!.making.toString() + downloading!!.videoType + ".temp")
                     var file2 = File(path, downloading!!.making.toString() + downloading!!.videoType)
                     file1.renameTo(file2)
-                }else{
+                } else {
                     var file1 = File(path, downloading!!.fileName + ".temp")
                     var file2 = File(path, downloading!!.fileName)
                     file1.renameTo(file2)
                 }
                 downloading!!.making++
-                if(downloading!!.making >= downloading!!.count){
+                if (downloading!!.making >= downloading!!.count) {
                     downloading!!.del()
                     downloading!!.status = DownloadInfo.FINISH
                     db.upData(downloading!!)
                     nextDownload()
-                }else{
+                } else {
                     var len = downloading!!.progress
                     downloading!!.progress = 0
                     //newDownload()
@@ -122,16 +120,17 @@ class DownloadService : Service() {
             }
         }
         mDownloadManager.onError = {
-            if(downloading != null){
+            if (downloading != null) {
                 downloading!!.status = DownloadInfo.FAIL
                 db.upData(downloading!!)
                 nextDownload()
             }
         }
     }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val mBundle = intent.extras
-        when(intent.action){
+        when (intent.action) {
             ACTION_ADD -> {
                 var info = mBundle.getParcelable<DownloadInfo>(ConstantUtil.DATA)
                 if (downloading == null) {
@@ -142,13 +141,13 @@ class DownloadService : Service() {
             }
             ACTION_START -> {
                 var cid = mBundle.getString(ConstantUtil.CID)
-                if(downloading != null){
+                if (downloading != null) {
                     mDownloadManager.cancel()
                     downloading!!.status = DownloadInfo.PAUSE
                     db.upData(downloading!!)
                 }
                 var info = db.queryByCID(cid)
-                if (info != null){
+                if (info != null) {
                     downloading = info
                     downloading!!.status = DownloadInfo.WAIT
                     db.upData(downloading!!)
@@ -157,21 +156,21 @@ class DownloadService : Service() {
             }
             ACTION_PAUSE -> {
                 mDownloadManager.cancel()
-                if(downloading != null){
+                if (downloading != null) {
                     downloading!!.status = DownloadInfo.PAUSE
                     db.upData(downloading!!)
                     nextDownload()
-                }else{
+                } else {
                     reView()
                 }
             }
             ACTION_FINISHED -> {
                 var cid = mBundle.getString(ConstantUtil.CID)
                 db.delete(cid)
-                if (cid == downloading?.cid){
+                if (cid == downloading?.cid) {
                     mDownloadManager.cancel()
                     nextDownload()
-                }else{
+                } else {
                     reView()
                 }
             }
@@ -179,7 +178,7 @@ class DownloadService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    fun playUrl(callback: () -> Unit,error: () -> Unit){
+    fun playUrl(callback: () -> Unit, error: () -> Unit) {
         //var query = "appkey=f3bb208b3d081dc8&cid=$cid&from=miniplay&otype=json&player=1&quality=1&type=mp4"
 //        var query = ""//清晰度 32 64 80 112
 //        var sing = ApiHelper.getMD5(query + "1c15888dc316e05a15fdd0a02ed6584f")
@@ -188,25 +187,30 @@ class DownloadService : Service() {
 //        var url = "http://interface.bilibili.com/playurl?_device=uwp&cid=" + cid + "&otype=xml&quality=" + 1 + "&appkey=" + ApiHelper.appKey_Android + "&access_key=&type=mp4&mid=" + "" + "&_buvid=B3CC4714-C1D3-4010-918B-8E5253E123C16133infoc&_hwid=03008c8c0300d6d1&platform=uwp_desktop" + "&ts=" + ApiHelper.GetTimeSpen()
 //        url += "&sign=" + ApiHelper.GetSign_Android(url)
         var quality = arrayOf(112, 80, 64, 32)[downloading!!.quality]
-        var url = "https://interface.bilibili.com/playurl?cid=${downloading!!.cid}&player=1&quality=$quality&qn=$quality&ts=${ApiHelper.getTimeSpen()}"
+        var url = "https://interface.bilibili.com/v2/playurl?cid=${downloading!!.cid}&player=1&quality=$quality&qn=$quality&ts=${ApiHelper.getTimeSpen()}"
         url += "&sign=" + ApiHelper.getSing(url, "1c15888dc316e05a15fdd0a02ed6584f")
 
         MiaoHttp.newStringClient(
                 url = url,
-                headers = downloading!!.header!! ,
+                headers = downloading!!.header!!,
                 onResponse = {
-                    val pattern = """<length>(.*?)</length>.*?<size>(.*?)</size>.*?<url>.*?<!\[CDATA\[(.*?)]]></url>"""
+                    log(it)
+                    val pattern = """<durl>.*?<length>(.*?)</length>.*?<size>(.*?)</size>.*?<url>.*?<!\[CDATA\[(.*?)]]></url>.*?</durl>"""
                     //用正则式匹配文本获取匹配器
                     val matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE or Pattern.DOTALL).matcher(it)
-                    if (matcher.find()) {
-                        downloading!!.url = matcher.group(3)
-                        downloading!!.length = matcher.group(1).toLong()
-                        downloading!!.size = matcher.group(2).toLong()
-                        db.upData(downloading!!)
-                        callback()
-                    } else {
+                    downloading!!.url = ""
+                    downloading!!.length = 0L
+                    downloading!!.size = 0L
+                    downloading!!.urls.clear()
+                    while (matcher.find()) {
+                        downloading!!.urls.add(matcher.group(3))
+                        downloading!!.length += matcher.group(1).toLong()
+                        downloading!!.size += matcher.group(2).toLong()
+                    }
+                    if (downloading!!.urls.isEmpty()) {
                         error()
                     }
+                    callback()
                 },
                 onError = {
                     error()
@@ -214,13 +218,13 @@ class DownloadService : Service() {
         )
     }
 
-    fun playUrl2(callback: () -> Unit,error: () -> Unit){
+    fun playUrl2(callback: () -> Unit, error: () -> Unit) {
         var quality = arrayOf(4, 3, 2, 1)[downloading!!.quality]
         var url = "https://bangumi.bilibili.com/player/web_api/playurl/?cid=${downloading!!.cid}&module=bangumi&player=1&otype=json&type=flv&quality=$quality&ts=${ApiHelper.getTimeSpen()}"
         url += "&sign=" + ApiHelper.getSing(url, "1c15888dc316e05a15fdd0a02ed6584f")
         MiaoHttp.newStringClient(
                 url = url,
-                headers = downloading!!.header!! ,
+                headers = downloading!!.header!!,
                 onResponse = {
                     val jsonParser = JSONTokener(it)
                     try {
@@ -230,7 +234,7 @@ class DownloadService : Service() {
                         downloading!!.length = 0L
                         downloading!!.size = 0L
                         downloading!!.urls.clear()
-                        for(i in 0 until durls.length()){
+                        for (i in 0 until durls.length()) {
                             val durl = durls.getJSONObject(i)
                             downloading!!.urls.add(durl.getString("url"))
                             downloading!!.length += durl.getLong("length")
@@ -253,23 +257,23 @@ class DownloadService : Service() {
 
     fun newDownload() {
         db.reData(downloading!!.cid)
-        if(downloading!!.type == "anime"){
+        if (downloading!!.type == "anime") {
             playUrl2({
                 startDownload()
-            },{
-                Toast.makeText(this,"下载姬被搞坏了",Toast.LENGTH_LONG).show()
-                if(downloading != null){
+            }, {
+                Toast.makeText(this, "下载姬被搞坏了", Toast.LENGTH_LONG).show()
+                if (downloading != null) {
                     downloading!!.status = DownloadInfo.FAIL
                     db.upData(downloading!!)
                     nextDownload()
                 }
             })
-        }else{
+        } else {
             playUrl({
                 startDownload()
-            },{
-                Toast.makeText(this,"下载姬被搞坏了",Toast.LENGTH_LONG).show()
-                if(downloading != null){
+            }, {
+                Toast.makeText(this, "下载姬被搞坏了", Toast.LENGTH_LONG).show()
+                if (downloading != null) {
                     downloading!!.status = DownloadInfo.FAIL
                     db.upData(downloading!!)
                     nextDownload()
@@ -278,7 +282,7 @@ class DownloadService : Service() {
         }
     }
 
-    fun getFile(info: DownloadInfo): File{
+    fun getFile(info: DownloadInfo): File {
         var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/"
         FileUtil.isPath(path)
         path = FileUtil.isPath(path + "b站视频/")
@@ -288,52 +292,52 @@ class DownloadService : Service() {
         return file
     }
 
-    fun startDownload(){
+    fun startDownload() {
         var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/"
         FileUtil.isPath(path)
         path = FileUtil.isPath(path + "b站视频/")
 
         downloading!!.videoType = videoType(downloading!!.url)
         db.upData(downloading!!)
-        if (downloading!!.count > 1){
+        if (downloading!!.count > 1) {
             path = FileUtil.isPath(path + "${downloading!!.name}/")
             var making = 0
             var len = 0L
             var f = File(path, making.toString() + downloading!!.videoType)
-            while (f.exists()){
+            while (f.exists()) {
                 len += f.length()
                 making++
                 f = File(path, making.toString() + downloading!!.videoType)
             }
             downloading!!.making = making
             mDownloadManager.create(downloading!!, File(path, downloading!!.making.toString() + downloading!!.videoType + ".temp"), len)
-        }else{
+        } else {
             mDownloadManager.create(downloading!!, File(path, downloading!!.fileName + ".temp"))
         }
     }
 
 
-    fun nextDownload(){
+    fun nextDownload() {
         var list = db.queryAll()
         val info: DownloadInfo? = list.firstOrNull { it.status == DownloadInfo.WAIT }
-        if (info != null){
+        if (info != null) {
             downloading = info
             downloading!!.status = DownloadInfo.DOWNLOADING
             db.upData(downloading!!)
             newDownload()
-        }else{
+        } else {
             downloading = null
         }
         reView()
     }
 
-    private fun reView(){
+    private fun reView() {
         val intent = Intent(DownloadService.ACTION_REVIEW)
         this@DownloadService.sendBroadcast(intent)
     }
 
-    fun videoType(url: String): String{
-        return if(".flv" in url)
+    fun videoType(url: String): String {
+        return if (".flv" in url)
             ".flv"
         else
             ".mp4"
@@ -372,7 +376,7 @@ class DownloadService : Service() {
             activity.startService(mIntent)
         }
 
-        fun start(activity: Activity,cid: String){
+        fun start(activity: Activity, cid: String) {
             val mIntent = Intent(activity, DownloadService::class.java)
             val mBundle = Bundle()
             mBundle.putString(ConstantUtil.CID, cid)
@@ -381,7 +385,7 @@ class DownloadService : Service() {
             activity.startService(mIntent)
         }
 
-        fun del(activity: Activity,cid: String) {
+        fun del(activity: Activity, cid: String) {
             val mIntent = Intent(activity, DownloadService::class.java)
             val mBundle = Bundle()
             mBundle.putString(ConstantUtil.CID, cid)

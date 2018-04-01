@@ -28,7 +28,6 @@ object BiliApiService {
         url += "&sign=" + ApiHelper.getSign_Android(url)
         return url;
     }
-
     /**
      * 获取直播信息
      */
@@ -88,6 +87,16 @@ object BiliApiService {
     fun getSearchUpper(keyword: String,pageNum: Int,pageSize: Int) =
             "http://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=2&keyword=$keyword&pn=$pageNum&ps=$pageSize"
 
+    /**
+     * 影视搜索
+     */
+    fun getSearchMovie(keyword: String,pageNum: Int,pageSize: Int) =
+            "http://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=3&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+    /**
+     * 关键字列表
+     */
+    fun getKeyWord(keyword: String) =
+            "http://s.search.bilibili.com/main/suggest?suggest_type=accurate&sub_type=tag&main_ver=v1&term=$keyword"
     //------------排行榜部分----------------
     /**
      * 全站
@@ -120,5 +129,5 @@ object BiliApiService {
      * 番剧
      */
     fun getRankBangumi(region: String,dayNum: Int) =
-            "https://bangumi.bilibili.com/jsonp/season_rank_list/$region/$dayNum.ver?_=${ApiHelper.getTimeSpen()}"
+            "https://bangumi.bilibili.com/jsonp/season_rank_list/$region/$dayNum.ver?callback=bangumiRankCallback&_=${ApiHelper.getTimeSpen()}"
 }

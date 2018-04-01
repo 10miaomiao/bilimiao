@@ -12,6 +12,7 @@ import android.view.*
 import android.widget.Toast
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.adapter.SearchBoxHistoryAdapter
+import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
 import com.a10miaomiao.bilimiao.utils.KeyboardUtil
@@ -151,7 +152,7 @@ class SearchBoxFragment : DialogFragment()
         if(isID(keyword))
             return
         MiaoHttp.newStringClient(
-                url = "http://s.search.bilibili.com/main/suggest?suggest_type=accurate&sub_type=tag&main_ver=v1&term=$keyword",
+                url = BiliApiService.getKeyWord(keyword),
                 onResponse = {
                     if(keyword != et_search_keyword?.text.toString())
                         return@newStringClient

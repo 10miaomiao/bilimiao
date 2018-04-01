@@ -34,7 +34,7 @@ class EditPreventKeywordActivity : BaseActivity() {
 
     override fun initToolBar() {
         toolbar.title = "屏蔽设置"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener({ finish() })
     }
 

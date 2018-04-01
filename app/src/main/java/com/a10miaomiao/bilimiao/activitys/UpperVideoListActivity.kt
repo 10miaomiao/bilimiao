@@ -61,7 +61,7 @@ class UpperVideoListActivity : BaseActivity() {
             adapter = mAdapter
         }
         mAdapter.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, "http://www.bilibili.com/video/av${archives[position].aid}/")
+            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].aid.toString())
         }
         mAdapter.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看封面", "修改默认播放器")
@@ -95,7 +95,7 @@ class UpperVideoListActivity : BaseActivity() {
 
     override fun initToolBar() {
         toolbar.title = "全部投稿"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
             finish()
         }

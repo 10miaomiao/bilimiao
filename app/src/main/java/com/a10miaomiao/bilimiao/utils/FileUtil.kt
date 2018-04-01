@@ -13,13 +13,17 @@ import java.io.*
  * Created by 10喵喵 on 2017/8/28.
  */
 
-class FileUtil(pathName: String,var context: Context? = null){
+class FileUtil(pathName: String,var context: Context? = null,var miao: Boolean = true){
     var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/"
     var fileName = path
 
     init {
-        isPath(path)
-        path = isPath(path + pathName + "/")
+        if(miao) {
+            isPath(path)
+            path = isPath(path + pathName + "/")
+        }else{
+            path = pathName
+        }
     }
 
     @Throws(IOException::class)
@@ -36,6 +40,16 @@ class FileUtil(pathName: String,var context: Context? = null){
         val uri = Uri.fromFile(f)
         intent.data = uri
         context?.sendBroadcast(intent)
+        return this
+    }
+
+    fun saveText(data: ByteArray,name: String) : FileUtil{
+        fileName = path + name
+        val f = File(fileName)
+        val fOut = FileOutputStream(f)
+        fOut.write(data)
+        fOut.flush()
+        fOut.close()
         return this
     }
 

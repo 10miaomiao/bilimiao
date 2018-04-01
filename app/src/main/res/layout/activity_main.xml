@@ -62,7 +62,7 @@
                     android:layout_height="36dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="6dp"
-                    android:src="@mipmap/ic_more" />
+                    android:src="@drawable/ic_more_vert_grey_24dp" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -252,6 +252,13 @@
                     android:textColor="?attr/colorAccent" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试"
+            android:id="@+id/mButton"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -37,7 +37,7 @@ class RankActivity : BaseActivity(){
 
     override fun initToolBar() {
         toolbar.title = "排行榜"
-        toolbar.setNavigationIcon(R.mipmap.ic_back)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener({ finish() })
     }
 

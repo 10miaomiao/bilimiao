@@ -22,9 +22,6 @@ import com.a10miaomiao.bilimiao.utils.SettingUtil
  */
 class SettingPreferenceFragment : PreferenceFragment() {
 
-    val player by lazy {
-        findPreference("player") as Preference
-    }
     val about by lazy {
         findPreference("about") as Preference
     }
@@ -52,9 +49,6 @@ class SettingPreferenceFragment : PreferenceFragment() {
         val version = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
         about.summary = "版本：" + version
         donate.summary = "开发者想买女朋友o((>ω< ))o"
-        var n = SettingUtil.getInt(activity, ConstantUtil.PLAYER, ConstantUtil.PLAYER_BILI)
-        n = if (n in 0..3) n else ConstantUtil.PLAYER_BILI
-        player.summary = "当前播放器：${select_items[n]}"
     }
 
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
@@ -110,7 +104,7 @@ class SettingPreferenceFragment : PreferenceFragment() {
                     }
                     if (activity.packageManager.resolveActivity(intent, 0) != null) {  //存在
                         SettingUtil.putInt(activity, ConstantUtil.PLAYER, n)
-                        player.summary = "当前播放器：${select_items[n]}"
+                        //player.summary = "当前播放器：${select_items[n]}"
                     } else {//不存在
                         Toast.makeText(activity, "修改失败，你大概没有安装${select_items[n]}", Toast.LENGTH_LONG).show()
                     }

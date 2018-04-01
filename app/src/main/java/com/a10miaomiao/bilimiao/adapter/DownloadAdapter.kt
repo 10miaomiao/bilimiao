@@ -3,7 +3,9 @@ package com.a10miaomiao.bilimiao.adapter
 import android.view.View
 import android.widget.ProgressBar
 import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.R.id.item_duration
 import com.a10miaomiao.bilimiao.entity.DownloadInfo
+import com.a10miaomiao.bilimiao.utils.NumberUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -24,6 +26,7 @@ class DownloadAdapter(list: List<DownloadInfo>) : BaseQuickAdapter<DownloadInfo,
                 .placeholder(R.drawable.bili_default_image_tv)
                 .dontAnimate()
                 .into(helper?.getView(R.id.item_img))
+        helper?.setText(item_duration,NumberUtil.converDuration((item!!.length / 1000).toInt()))
         when (item!!.status ){
             DownloadInfo.FAIL -> {
                 helper?.setText(R.id.item_progress,"被搞坏了")

@@ -17,7 +17,8 @@ object ThemeHelper{
             R.style.YellowTheme,
             R.style.GreenTheme,
             R.style.BlueTheme,
-            R.style.PurpleTheme
+            R.style.PurpleTheme,
+            R.style.NightTheme
     )
 
     fun getSharePreference(context: Context): SharedPreferences {
@@ -41,5 +42,17 @@ object ThemeHelper{
         if(index >= themeIds.size)
             index = 0
         return themeIds[index]
+    }
+
+    fun getColorAccent(context: Context): Int {
+        return arrayOf(
+                R.color.pink,
+                R.color.red,
+                R.color.yellow,
+                R.color.green,
+                R.color.blue,
+                R.color.purple,
+                R.color.nightColorAccent
+        )[getTheme(context)]
     }
 }

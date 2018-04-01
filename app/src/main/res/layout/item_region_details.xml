@@ -64,15 +64,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/layout_play"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:orientation="horizontal"
             android:layout_marginBottom="3dp">
 
             <ImageView
                 android:layout_width="@dimen/video_info_mini_icons_size"
-                android:layout_height="@dimen/video_info_mini_icons_size"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/icon_up" />
+                android:src="@drawable/icon_up"
+                android:layout_marginRight="3dp"/>
 
             <TextView
                 android:id="@+id/item_user_name"
@@ -85,14 +86,15 @@
             android:id="@+id/layout_play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="@dimen/video_info_mini_icons_size"
-                android:layout_height="@dimen/video_info_mini_icons_size"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_play_circle_outline_black_24dp" />
+                android:src="@drawable/ic_play_circle_outline_black_24dp"
+                android:layout_marginRight="3dp"/>
 
             <TextView
                 android:id="@+id/item_play"
@@ -107,9 +109,10 @@
 
             <ImageView
                 android:layout_width="@dimen/video_info_mini_icons_size"
-                android:layout_height="@dimen/video_info_mini_icons_size"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_subtitles_black_24dp" />
+                android:src="@drawable/ic_subtitles_black_24dp"
+                android:layout_marginRight="3dp"/>
 
             <TextView
                 android:id="@+id/item_review"

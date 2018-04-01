@@ -65,11 +65,9 @@ object MiaoHttp {
                                 override fun onError(e: Throwable?) {
                                     onError?.invoke(IOException())
                                 }
-
                                 override fun onNext(t: T) {
                                     onResponse?.invoke(t)
                                 }
-
                                 override fun onCompleted() {
 
                                 }
@@ -116,7 +114,7 @@ object MiaoHttp {
                 onResponse = onResponse,
                 onError = onError,
                 parseNetworkResponse = {
-                    it.body().string()
+                    it.body()!!.string()
                 }
         )
     }

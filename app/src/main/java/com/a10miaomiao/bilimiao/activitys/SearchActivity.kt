@@ -7,9 +7,10 @@ import android.support.design.widget.TabLayout
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.dialog.SearchBoxFragment
-import com.a10miaomiao.bilimiao.fragments.BangumiResultFragment
-import com.a10miaomiao.bilimiao.fragments.SearchResultFragment
-import com.a10miaomiao.bilimiao.fragments.UpperResultFragment
+import com.a10miaomiao.bilimiao.fragments.search.BangumiResultFragment
+import com.a10miaomiao.bilimiao.fragments.search.MovieResultsFragment
+import com.a10miaomiao.bilimiao.fragments.search.SearchResultFragment
+import com.a10miaomiao.bilimiao.fragments.search.UpperResultFragment
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.regex.Pattern
@@ -36,11 +37,12 @@ class SearchActivity : BaseActivity() {
 
         tabs.tabMode = TabLayout.MODE_FIXED//设置tab模式，当前为系统默认模式
         mAdapter = PagerAdapter(supportFragmentManager)
-        mAdapter?.titles?.addAll(arrayListOf("综合","番剧","up主"))
+        mAdapter?.titles?.addAll(arrayListOf("综合", "番剧", "up主", "影视"))
         mAdapter?.fragments?.addAll(arrayListOf(
                 SearchResultFragment.newInstance(keyword),
                 BangumiResultFragment.newInstance(keyword),
-                UpperResultFragment.newInstance(keyword)
+                UpperResultFragment.newInstance(keyword),
+                MovieResultsFragment.newInstance(keyword)
         ))
 
         vp_view.adapter = mAdapter//给ViewPager设置适配器
@@ -69,7 +71,7 @@ class SearchActivity : BaseActivity() {
 //                searchResultFragment.arguments = bundle
 //                bangumiResultFragment.arguments = bundle
 //                upperResultFragment.arguments = bundle
-                noAnimationLaunch(activity,it)
+                noAnimationLaunch(activity, it)
                 finish()
                 overridePendingTransition(0, 0)
                 true
@@ -85,7 +87,8 @@ class SearchActivity : BaseActivity() {
             searchFragment.show(supportFragmentManager, "-----")
         }
     }
-    private fun search(keyword: String): Info?{
+
+    private fun search(keyword: String): Info? {
         var a = ""
         var ss = arrayOf("av", "ss", "live", "au", "cv")
         for (s in ss) {
@@ -96,6 +99,7 @@ class SearchActivity : BaseActivity() {
         }
         return null
     }
+
     /**
      * 用正则获取视频id
      */
@@ -108,18 +112,20 @@ class SearchActivity : BaseActivity() {
     }
 
     companion object {
-        fun launch(activity: Activity,keyword: String) {
+        fun launch(activity: Activity, keyword: String) {
             val mIntent = Intent(activity, SearchActivity::class.java)
             mIntent.putExtra(ConstantUtil.KETWORD, keyword)
             activity.startActivity(mIntent)
         }
-        fun noAnimationLaunch(activity: Activity,keyword: String) {
+
+        fun noAnimationLaunch(activity: Activity, keyword: String) {
             val mIntent = Intent(activity, SearchActivity::class.java)
             mIntent.putExtra(ConstantUtil.KETWORD, keyword)
             mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION;
             activity.startActivity(mIntent)
         }
     }
+
     data class Info(
             var aid: String,
             var type: String
