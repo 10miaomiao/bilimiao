@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/subscription_show"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/mTitiltTv"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="15sp"
+            android:textColor="@color/black_80"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/video_info_mini_icons_size"
+                android:layout_height="@dimen/video_info_mini_icons_size"
+                android:src="@drawable/ic_info_views"
+                android:tint="@color/black_alpha_45" />
+
+            <TextView
+                android:id="@+id/mPlayTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_tiny_text_size" />
+
+            <Space
+                android:layout_width="@dimen/activity_vertical_margin"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:layout_width="@dimen/video_info_mini_icons_size"
+                android:layout_height="@dimen/video_info_mini_icons_size"
+                android:src="@drawable/ic_info_danmakus"
+                android:tint="@color/black_alpha_45" />
+
+            <TextView
+                android:id="@+id/mDanmakusTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_tiny_text_size" />
+
+            <Space
+                android:layout_width="@dimen/activity_vertical_margin"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/mTimeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_tiny_text_size" />
+
+        </LinearLayout>
+
+        <com.a10miaomiao.bilimiao.widget.MySpannableTextView
+            android:id="@+id/mInfoTv"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="13sp" />
+
+        <!--分割线-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_light"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <!--分p列表-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_pages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never" />
+
+        <!--up主信息-->
+        <RelativeLayout
+            android:id="@+id/mUperLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackground">
+
+            <com.gcssloop.widget.RCRelativeLayout
+                android:id="@+id/mUperAvatarLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:round_as_circle="true">
+
+                <ImageView
+                    android:id="@+id/mUperAvatarIv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ico_user_default" />
+
+            </com.gcssloop.widget.RCRelativeLayout>
+
+            <TextView
+                android:id="@+id/mUperNameTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/black_80"
+                android:text="up主"
+                android:layout_toRightOf="@id/mUperAvatarLayout"/>
+
+            <TextView
+                android:id="@+id/mUperFansTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="人关注"
+                android:layout_toRightOf="@id/mUperAvatarLayout"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

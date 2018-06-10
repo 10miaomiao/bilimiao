@@ -15,6 +15,7 @@ import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
 import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.a10miaomiao.bilimiao.views.LoadMoreView
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_uper_video_list.*
@@ -45,8 +46,9 @@ class UpperVideoListActivity : BaseActivity() {
     override fun initViews(savedInstanceState: Bundle?) {
         initRecyclerView()
         loadData()
-        swipe_ly.setColorSchemeResources(R.color.colorAccent, R.color.colorAccent,
-                R.color.colorAccent, R.color.colorAccent)
+
+        val color = ThemeHelper.getColorAccent(this)
+        swipe_ly.setColorSchemeResources(color, color,color, color)
 
         swipe_ly.setOnRefreshListener({
             clearList()
@@ -64,7 +66,7 @@ class UpperVideoListActivity : BaseActivity() {
             IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].aid.toString())
         }
         mAdapter.setOnItemLongClickListener { adapter, view, position ->
-            val items_selector = arrayOf("查看封面", "修改默认播放器")
+            val items_selector = arrayOf("查看封面")
             AlertDialog.Builder(activity)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {

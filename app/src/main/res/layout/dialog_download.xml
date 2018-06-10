@@ -60,5 +60,15 @@
             android:textAlignment="center"
             android:background="?attr/selectableItemBackground"
             android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="播放视频"
+            android:id="@+id/tv_play"
+            android:textColor="?attr/colorAccent"
+            android:padding="15dp"
+            android:textAlignment="center"
+            android:background="?attr/selectableItemBackground" />
     </LinearLayout>
 </LinearLayout>

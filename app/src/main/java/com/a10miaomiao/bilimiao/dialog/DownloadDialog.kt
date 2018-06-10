@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.Toast
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.activitys.DanmakuActivity
+import com.a10miaomiao.bilimiao.activitys.PlayerActivity
 import com.a10miaomiao.bilimiao.adapter.RankOrdersAdapter
 import com.a10miaomiao.bilimiao.db.DownloadDB
 import com.a10miaomiao.bilimiao.entity.DownEntryInfo
@@ -43,28 +44,29 @@ class DownloadDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.dialog_download, container,false)
+        val view = inflater!!.inflate(R.layout.dialog_download, container, false)
         return view
     }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        if(db.queryByCID(info.cid) != null){
+        if (db.queryByCID(info.cid) != null) {
             tv_download.text = "已加入下载"
             tv_download.isEnabled = false
             tv_download.setTextColor(activity.resources.getColor(R.color.text_grey))
         }
         //判断是否为番剧
-        if(info.video_type == "anime"){
+        if (info.video_type == "anime") {
             tv_download_app.visibility = View.VISIBLE
         }
         //判断有没有存储权限
-        if(!isPermissions()){
+        if (!isPermissions()) {
             tv_download.text = "没有存储权限"
             tv_download.isEnabled = false
             tv_download.setTextColor(activity.resources.getColor(R.color.text_grey))
             tv_download_app.visibility = View.GONE
         }
         //选择器部分
-        mAdapter = RankOrdersAdapter(arrayOf("1080P","超清","高清","清晰"))
+        mAdapter = RankOrdersAdapter(arrayOf("1080P", "超清", "高清", "清晰"))
         mAdapter.checkItemPosition = 1
         recycle.apply {
             setHasFixedSize(true)
@@ -75,14 +77,14 @@ class DownloadDialog : DialogFragment() {
             mAdapter.checkItemPosition = position
         }
         tv_danmakiu.setOnClickListener {
-            DanmakuActivity.launch(activity,info.cid)
+            DanmakuActivity.launch(activity, info.cid)
             dismiss()
         }
         /**
          * 开始下载
          */
         tv_download.setOnClickListener {
-            if(info.video_type == "anime"){
+            if (info.video_type == "anime") {
                 DownloadService.add(activity, DownloadInfo(
                         cid = info.cid,
                         aid = info.ep_id!!,
@@ -91,7 +93,7 @@ class DownloadDialog : DialogFragment() {
                         type = info.video_type,
                         pic = info.cover
                 ))
-            }else{
+            } else {
                 DownloadService.add(activity, DownloadInfo(
                         cid = info.cid,
                         aid = info.av_id,
@@ -108,9 +110,9 @@ class DownloadDialog : DialogFragment() {
          * 调用app客户端下载
          */
         tv_download_app.setOnClickListener {
-            try{
+            try {
                 var entry = createEntry()
-                BiliClientDownHelper.createAnime(activity,ClientDownInfo(
+                BiliClientDownHelper.createAnime(activity, ClientDownInfo(
                         av_id = info.av_id,
                         danmaku_id = info.cid,
                         entry = entry,
@@ -119,9 +121,31 @@ class DownloadDialog : DialogFragment() {
                         season_id = info.season_id!!
                 ))
                 Toast.makeText(activity, "成功投喂给b站客户端，请重启b站客户端", Toast.LENGTH_LONG).show()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(activity, "投喂失败(≧﹏ ≦)", Toast.LENGTH_LONG).show()
+            }
+            dismiss()
+        }
+        tv_play.setOnClickListener {
+            if(info.video_type == "anime"){
+                PlayerActivity.play(activity, DownloadInfo(
+                        cid = info.cid,
+                        aid = info.ep_id!!,
+                        name = info.title,
+                        quality = mAdapter.checkItemPosition,
+                        type = info.video_type,
+                        pic = info.cover
+                ))
+            }else{
+                PlayerActivity.play(activity, DownloadInfo(
+                        cid = info.cid,
+                        aid = info.av_id,
+                        name = info.title,
+                        quality = mAdapter.checkItemPosition,
+                        type = info.video_type,
+                        pic = info.cover
+                ))
             }
             dismiss()
         }
@@ -143,11 +167,11 @@ class DownloadDialog : DialogFragment() {
     /**
      * 创建Entry
      */
-    fun createEntry(): EntryInfo{
+    fun createEntry(): EntryInfo {
         var description = "超清"
         var q = 3
         var quality = "lua.flv720.bb2api.64"
-        when(mAdapter.checkItemPosition){
+        when (mAdapter.checkItemPosition) {
             0 -> {
                 quality = "lua.hdflv2.bb2api.bd"
                 description = "1080P"
@@ -209,7 +233,7 @@ class DownloadDialog : DialogFragment() {
         fun newInstance(info: DownEntryInfo): DownloadDialog {
             val args = Bundle()
             val fragment = DownloadDialog()
-            args.putParcelable(ConstantUtil.DATA,info)
+            args.putParcelable(ConstantUtil.DATA, info)
             fragment.arguments = args
             return fragment
         }

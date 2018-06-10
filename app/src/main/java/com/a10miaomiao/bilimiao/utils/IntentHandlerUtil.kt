@@ -3,6 +3,7 @@ package com.a10miaomiao.bilimiao.utils
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import com.a10miaomiao.bilimiao.activitys.VideoInfoActivity
 
 /**
  * Created by 10喵喵 on 2017/11/5.
@@ -15,6 +16,10 @@ object IntentHandlerUtil {
      * 调用b站打开打开
      */
     fun openWithPlayer(activity: Activity,type: String, id: String){
+        if(type == TYPE_VIDEO){
+            VideoInfoActivity.launch(activity,id)
+            return
+        }
         try {
             var intent = Intent(Intent.ACTION_VIEW)
             var url = when(type){

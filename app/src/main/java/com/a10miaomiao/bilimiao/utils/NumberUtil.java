@@ -20,6 +20,13 @@ public class NumberUtil {
         String numStr = String.format("%." + 1 + "f", newNum);
         return numStr + unit;
     }
+    public static String converString(String num) {
+        try {
+            return converString(Integer.valueOf(num));
+        }catch (NumberFormatException e){
+            return "--";
+        }
+    }
 
     public static String converDuration(int duration) {
         String s = String.valueOf(duration % 60);
@@ -33,6 +40,12 @@ public class NumberUtil {
 
     public static String converCTime(Long ctime) {
         Date date = new Date(ctime * 1000);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        return sf.format(date);
+    }
+
+    public static String converCTime2(Long ctime) {
+        Date date = new Date(ctime);
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         return sf.format(date);
     }

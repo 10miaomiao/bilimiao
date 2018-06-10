@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#99000000">
+
+        <ImageView
+            android:id="@+id/media_controller_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/default_general_margin"
+            android:src="@drawable/bili_player_back_button"
+            android:tint="@color/colorWhite"
+            android:layout_marginLeft="@dimen/default_general_margin"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        <TextView
+            android:id="@+id/media_controller_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/default_medium_text_size"
+            android:layout_marginLeft="@dimen/default_general_margin" />
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/media_controller_tv_play"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_above="@+id/media_controller_controls"
+        android:padding="@dimen/default_general_margin"
+        android:src="@drawable/ic_tv_play"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/default_general_margin" />
+
+    <LinearLayout
+        android:id="@+id/media_controller_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#99000000"
+        android:layout_alignParentBottom="true">
+
+        <SeekBar
+            android:id="@+id/media_controller_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:max="1000"
+            android:maxHeight="@dimen/default_tiny_margin"
+            android:minHeight="@dimen/default_tiny_margin"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:progressDrawable="@color/colorPrimary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/media_controller_play_pause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@null"
+                android:gravity="center"
+                android:src="@drawable/bili_player_play_can_play"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/default_general_margin" />
+
+            <TextView
+                android:id="@+id/media_controller_time_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/default_tiny_text_size"
+                android:textStyle="bold"
+                android:layout_marginLeft="22dp"
+                android:layout_toRightOf="@+id/media_controller_play_pause" />
+
+            <TextView
+                android:id="@+id/time_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:text="/"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/default_tiny_text_size"
+                android:layout_toRightOf="@+id/media_controller_time_current" />
+
+            <TextView
+                android:id="@+id/media_controller_time_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/default_tiny_text_size"
+                android:textStyle="bold"
+                android:layout_toRightOf="@+id/time_line" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"></View>
+
+            <LinearLayout
+                android:id="@+id/media_controller_danmaku_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/default_grow_margin"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/media_controller_danmaku_switch"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/bili_player_danmaku_is_open" />
+
+                <TextView
+                    android:id="@+id/media_controller_danmaku_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
+                    android:text="弹幕开"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/default_tiny_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/media_controller_controls_quality_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/default_tiny_margin"
+                android:layout_marginRight="@dimen/default_grow_margin"
+                android:layout_toLeftOf="@+id/media_controller_controls_lock_layout">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_player_media_quality_medium" />
+
+                <TextView
+                    android:id="@+id/media_controller_quality_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
+                    android:text="清晰"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/default_tiny_text_size" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/media_controller_controls_lock_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/default_tiny_margin"
+                android:layout_marginRight="@dimen/default_general_margin">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_player_locked_2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
+                    android:text="锁屏"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/default_tiny_text_size" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

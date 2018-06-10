@@ -19,12 +19,14 @@ import rx.Observable
  */
 class RegionTypeDetailsActivity : BaseActivity() {
     override var layoutResID: Int = R.layout.activity_region_details
-    var mDataBean: RegionTypesInfo.DataBean? = null
+
+    val mDataBean by lazy {
+        intent.extras.getParcelable< RegionTypesInfo.DataBean>(ConstantUtil.EXTRA_PARTITION)
+    }
+
     val titles = ArrayList<String>()
 
     override fun initViews(savedInstanceState: Bundle?) {
-        val mBundle = intent.extras
-        mDataBean = mBundle.getParcelable(ConstantUtil.EXTRA_PARTITION)
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
         if (prefs.getBoolean("region_time_line", true))

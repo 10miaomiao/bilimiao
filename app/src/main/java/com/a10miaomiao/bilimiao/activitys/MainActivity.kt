@@ -2,6 +2,7 @@ package com.a10miaomiao.bilimiao.activitys
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.widget.GridLayoutManager
@@ -14,7 +15,10 @@ import com.a10miaomiao.bilimiao.adapter.HomeRegionItemAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.dialog.SearchBoxFragment
 import com.a10miaomiao.bilimiao.entity.HomeRegionInfo
+import com.a10miaomiao.bilimiao.entity.MiaoAdInfo
 import com.a10miaomiao.bilimiao.entity.RegionTypesInfo
+import com.a10miaomiao.bilimiao.netword.MiaoHttp
+import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
 import com.a10miaomiao.bilimiao.utils.SelectorDateUtil
 import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.google.gson.Gson
@@ -47,6 +51,7 @@ class MainActivity : BaseActivity() {
         homeRegionAdapter = HomeRegionItemAdapter(homeRegionList)
         recycle_region.apply {
             setHasFixedSize(true)
+            isNestedScrollingEnabled = false
             layoutManager = GridLayoutManager(activity, 5)
             adapter = homeRegionAdapter
         }
@@ -61,7 +66,7 @@ class MainActivity : BaseActivity() {
                 finish()
                 overridePendingTransition(0, 0)
                 startActivity(Intent(this, MainActivity::class.java))
-            }else{
+            } else {
                 var d = search(it)
                 if (d == null) {
                     SearchActivity.launch(activity, it)
@@ -111,6 +116,7 @@ class MainActivity : BaseActivity() {
         searchClipboard()
         setRegionCard()
         setTimeLineCard()
+        getAd()
     }
 
     /**
@@ -174,7 +180,7 @@ class MainActivity : BaseActivity() {
      */
     private fun search(key: String): Info? {
         var a = ""
-        var ss = arrayOf("av", "ss", "live", "au", "cv")
+        var ss = arrayOf("av", "ss", "live", "au", "cv", "ep")
         for (s in ss) {
             a = getAid(key, "$s(\\d+)")
             if (a != "") {
@@ -190,7 +196,7 @@ class MainActivity : BaseActivity() {
     private fun searchClipboard() {
         val plaster = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (plaster.hasText()) {
-            findAid(plaster.text.toString().trim())
+            info = findAid(plaster.text.toString().trim())
             if (info != null) {
                 find_avid.text = "点击进入 ${info!!.type}${info!!.aid}"
             }
@@ -204,38 +210,37 @@ class MainActivity : BaseActivity() {
      * NEW GAME!!, http://bangumi.bilibili.com/anime/6330/
      * 播主：Zelo-Balance http://live.bilibili.com/live/14047.html
      */
-    private fun findAid(text: String) {
+    private fun findAid(text: String): Info? {
         var a = ""
         a = getAid(text, ".*http://www.bilibili.com/video/av(\\d+).*")
         if (a != "") {
-            info = Info(a, "av")
-            return
+            return Info(a, "av")
         }
         a = getAid(text, ".*http://bangumi.bilibili.com/anime/(\\d+)/.*")
         if (a != "") {
-            info = Info(a, "ss")
-            return
+            return Info(a, "ss")
         }
         a = getAid(text, ".*http://live.bilibili.com/live/(\\d+).html.*")
         if (a != "") {
-            info = Info(a, "live")
-            return
+            return Info(a, "live")
         }
         a = getAid(text, ".*https://m.bilibili.com/audio/au(\\d+)")
         if (a != "") {
-            info = Info(a, "au")
-            return
+            return Info(a, "au")
         }
         a = getAid(text, ".*http://www.bilibili.com/read/cv(\\d+)")
         if (a != "") {
-            info = Info(a, "cv")
-            return
+            return Info(a, "cv")
         }
         a = getAid(text, ".*http://m.bilibili.com/bangumi/play/ss(\\d+)")
         if (a != "") {
-            info = Info(a, "ss")
-            return
+            return Info(a, "ss")
         }
+        a = getAid(text, ".*https://m.bilibili.com/bangumi/play/ep(\\d+).*")
+        if (a != "") {
+            return Info(a, "ep")
+        }
+        return null
     }
 
     /**
@@ -268,6 +273,55 @@ class MainActivity : BaseActivity() {
             e.printStackTrace()
             return null
         }
+    }
+
+    /**
+     * 获取广告信息
+     */
+    private fun getAd() {
+        MiaoHttp.newStringClient(
+                url = "https://10miaomiao.cn/miao/bilimiao/ad",
+                onResponse = {
+                    try {
+                        var info = Gson().fromJson(it, MiaoAdInfo::class.java)
+                        if (info.code == 0) {
+                            var dataBean = info.data
+                            //是否显示视频推荐
+                            if (dataBean.isShow) {
+                                card_ad.visibility = View.VISIBLE
+                                tv_ad.text = dataBean.title
+                                btn_ad.text = dataBean.link.text
+                                btn_ad.setOnClickListener {
+                                    linkAd(dataBean.link.url)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+
+                    }
+                }
+        )
+    }
+
+    /**
+     * 广告跳转
+     */
+    private fun linkAd(url: String) {
+        var info = findAid(url)
+        if (info != null) {
+            if (info.type == "av") {
+                IntentHandlerUtil.openWithPlayer(activity, info.aid, IntentHandlerUtil.TYPE_VIDEO)
+                return
+            }
+            if (info.type == "ss") {
+                IntentHandlerUtil.openWithPlayer(activity, info.aid, IntentHandlerUtil.TYPE_BANGUMI)
+                return
+            }
+        }
+        //普通链接 调用浏览器
+        var intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 
     /**

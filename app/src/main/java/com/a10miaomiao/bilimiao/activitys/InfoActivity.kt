@@ -77,13 +77,9 @@ class InfoActivity : BaseActivity() {
 
         if (mBundle.containsKey(Intent.EXTRA_TEXT)) {
             val text = mBundle.getString(Intent.EXTRA_TEXT)
-            log(text)
             findAid(text)
         }
 
-//        if(detailsInfo == null && mBundle.containsKey(ConstantUtil.DETAILS_INFO)){
-//            detailsInfo = mBundle.getParcelable(ConstantUtil.DETAILS_INFO)
-//        }
         if (mBundle.containsKey(ConstantUtil.AID) && mBundle.containsKey(ConstantUtil.TYPE)) {
             val aid = intent.getStringExtra(ConstantUtil.AID)
             val type = intent.getStringExtra(ConstantUtil.TYPE)
@@ -93,6 +89,9 @@ class InfoActivity : BaseActivity() {
                 }
                 "anime", "ss" -> {
                     detailsInfo = AnimeDetailsInfo(aid)
+                }
+                "ep" -> {
+                    detailsInfo = EpDetailsInfo(aid)
                 }
                 "live" -> {
                     detailsInfo = LiveDetailsInfo(aid)
@@ -118,16 +117,6 @@ class InfoActivity : BaseActivity() {
                     })
                     .show()
         }
-//        tv_file_name.setOnClickListener {
-//            val editDialog = EditDialog()
-//            editDialog.show(supportFragmentManager, fileName)
-//        }
-
-//        if (intent.extras.get("cover") != null) {
-//            showImg(intent.getStringExtra("cover"))
-//        } else {
-//            loadData()
-//        }
 
         btn_saveImg.setOnClickListener {
             saveImage()
@@ -136,9 +125,6 @@ class InfoActivity : BaseActivity() {
             if (detailsInfo?.pic != null)
                 PhotoActivity.launch(activity, detailsInfo?.pic!!, fileName)
         }
-//        btn_openImg.setOnClickListener {
-//            toast("就是不打开 (手动傲娇")
-//        }
 
         //获取sd卡权限
         requestPermissions(tv_permission)
@@ -184,12 +170,20 @@ class InfoActivity : BaseActivity() {
      *
      * 新版本番剧
      * Slow Start, http://m.bilibili.com/bangumi/play/ss21675
+     *
+     *
      */
     private fun findAid(text: String) {
+        log(text)
         var a = ""
         a = getAid(text, ".*http://www.bilibili.com/video/av(\\d+)")
         if (a != "") {
             detailsInfo = VideoDetailsInfo(a)
+            return
+        }
+        a = getAid(text,".*https://m.bilibili.com/bangumi/play/ep(\\d+).*")
+        if (a != "") {
+            detailsInfo = EpDetailsInfo(a)
             return
         }
         a = getAid(text, ".*http://bangumi.bilibili.com/anime/(\\d+)/")
@@ -248,8 +242,12 @@ class InfoActivity : BaseActivity() {
 
                 if (detailsInfo is AnimeDetailsInfo)
                     loadBangumiEpisodes()
-                if (detailsInfo is VideoDetailsInfo)
+                if (detailsInfo is VideoDetailsInfo){
                     loadUperInfo()
+                    if((detailsInfo as VideoDetailsInfo).download_type == "anime"){
+                        loadBangumiInfo()
+                    }
+                }
                 if (detailsInfo is AudioDetailsInfo)
                     loadAudioInfo()
             }
@@ -270,8 +268,20 @@ class InfoActivity : BaseActivity() {
         }
         recycle.apply {
             setHasFixedSize(true)
+            isNestedScrollingEnabled = false
             layoutManager = GridLayoutManager(activity, 2)
             adapter = bangumiEpisodesAdapter
+        }
+    }
+
+    /**
+     * 加载番剧信息
+     */
+    private fun loadBangumiInfo(){
+        card_ban_info.visibility = View.VISIBLE
+        card_ban_info_name.text = (detailsInfo as VideoDetailsInfo).season_title
+        card_ban_info.setOnClickListener{
+            InfoActivity.launch(activity,(detailsInfo as VideoDetailsInfo).season_id,"ss")
         }
     }
 
@@ -337,25 +347,9 @@ class InfoActivity : BaseActivity() {
             val dd = DownloadDialog.newInstance(entry)
             dd.show(this.supportFragmentManager,"InfoActivity->DownloadDialog")
         }
-//        videoPagesAdapter?.setOnItemLongClickListener { adapter, view, position ->
-//            val items_selector = arrayOf("查看播放地址")
-//            AlertDialog.Builder(activity)
-//                    .setItems(items_selector, { dialogInterface, n ->
-////                        PlayInfoActivity.launch(activity, (detailsInfo as VideoDetailsInfo).pages[position].cid.toString()
-////                                , detailsInfo!!.aid, detailsInfo!!.title!!)
-//                        DownloadService.add(activity, DownloadInfo(
-//                                cid = (detailsInfo as VideoDetailsInfo).pages[position].cid.toString(),
-//                                aid = detailsInfo!!.aid,
-//                                name = detailsInfo!!.title!!
-//                        ))
-//                        toast("添加成功")
-//                    })
-//                    .setCancelable(true)
-//                    .show()
-//            true
-//        }
         recycle_pages.apply {
             setHasFixedSize(true)
+            isNestedScrollingEnabled = false
             layoutManager = GridLayoutManager(activity, 2)
             adapter = videoPagesAdapter
         }
@@ -424,13 +418,6 @@ class InfoActivity : BaseActivity() {
     }
 
     companion object {
-        //        fun launch(activity: Activity, detailsInfo: DetailsInfo) {
-//            val mIntent = Intent(activity, InfoActivity::class.java)
-//            val mBundle = Bundle()
-//            mBundle.putParcelable(ConstantUtil.DETAILS_INFO, detailsInfo)
-//            mIntent.putExtras(mBundle)
-//            activity.startActivity(mIntent)
-//        }
         fun launch(activity: Activity, aid: String, type: String) {
             val mIntent = Intent(activity, InfoActivity::class.java)
             mIntent.putExtra(ConstantUtil.AID, aid)

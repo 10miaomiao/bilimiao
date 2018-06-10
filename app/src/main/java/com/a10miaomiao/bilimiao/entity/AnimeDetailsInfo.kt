@@ -40,7 +40,7 @@ class AnimeDetailsInfo(aid: String) : DetailsInfo(aid) {
                         }
                     } catch (e: JSONException) {
                         e.printStackTrace()
-                        onError?.invoke(e, "视频信息解析失败或无该anime号")
+                        onError?.invoke(e, "视频信息解析失败或无该ss号")
                     } catch (e: ClassCastException) {
                         onError?.invoke(e, "网络好像有问题＞﹏＜")
                     }

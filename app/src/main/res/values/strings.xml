@@ -29,5 +29,10 @@
         2、如果侵犯您的合法权益，请及时联系本人以第一时间删除
     </string>
 
+    <string name="video_error_title">Cannot play video</string>
+    <string name="video_error_text_invalid_progressive_playback">Sorry, this video is not valid for streaming tothis device.</string>
+    <string name="video_error_text_unknown">Sorry, this video cannot be played.</string>
+    <string name="video_error_button">OK</string>
+
 
 </resources>

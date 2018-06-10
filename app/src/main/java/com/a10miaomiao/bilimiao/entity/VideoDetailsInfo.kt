@@ -10,7 +10,7 @@ import org.json.JSONTokener
 /**
  * Created by 10喵喵 on 2017/10/5.
  */
-class VideoDetailsInfo(aid: String) : DetailsInfo(aid) {
+open class VideoDetailsInfo(aid: String) : DetailsInfo(aid) {
     override var aidType = "av"
 
     var uper_name: String? = null

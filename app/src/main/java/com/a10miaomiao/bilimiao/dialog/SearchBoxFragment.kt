@@ -138,7 +138,7 @@ class SearchBoxFragment : DialogFragment()
         val matcher = compile.matcher(keyword)
         if (matcher.find()){
             historys.clear()
-            arrayOf("av", "ss", "live", "au", "cv").mapTo(historys){
+            arrayOf("av", "ss", "live", "au", "cv", "ep").mapTo(historys){
                 "$it$keyword"
             }
             tv_search_clean?.visibility = View.GONE

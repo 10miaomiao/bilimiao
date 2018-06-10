@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="app_bar_height">240dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
@@ -14,5 +14,24 @@
 
     <dimen name="app_bar_default_elevation">3dp</dimen>
 
+    <!--播放器部分-->
+    <dimen name="mediacontroller_buttons_top_margin">2dp</dimen>
+    <dimen name="mediacontroller_bottom_layout_center_margin">12dp</dimen>
+    <dimen name="mediacontroller_bottom_layout_danmaku_padding">3dp</dimen>
 
+    <dimen name="action_bar_default_height">52dp</dimen>
+    <dimen name="fab_margin_height">190dp</dimen>
+    <dimen name="fab_default_elevation">4dp</dimen>
+    <dimen name="app_bar_elevation">3dp</dimen>
+    <dimen name="live_user_layout_height">70dp</dimen>
+    <dimen name="line_height">1dp</dimen>
+    <dimen name="line_width">120dp</dimen>
+    <dimen name="login_button_height">45dp</dimen>
+    <dimen name="default_small_padding">8dp</dimen>
+    <dimen name="default_tiny_margin">3dp</dimen>
+    <dimen name="default_long_margin">20dp</dimen>
+    <dimen name="head_image_bg_height">128dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>

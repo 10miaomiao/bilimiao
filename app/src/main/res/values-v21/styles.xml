@@ -15,4 +15,12 @@
     <style name="PhotoTheme" parent="AppTheme.NoActionBar">
         <item name="android:navigationBarColor">#000</item>
     </style>
+
+    <!-- StatusBar为透明色 -->
+    <style name="ColorTranslucentTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <!-- Android 5.x开始需要把颜色设置透明，否则导航栏会呈现系统默认的浅灰色 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

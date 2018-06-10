@@ -12,6 +12,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- StatusBar为透明色 -->
+    <style name="ColorTranslucentTheme" parent="AppTheme.NoActionBar" >
+
+    </style>
+
     <style name="SplashTheme" parent="AppTheme.NoActionBar">
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowFullscreen">true</item>

@@ -90,7 +90,7 @@ class SearchActivity : BaseActivity() {
 
     private fun search(keyword: String): Info? {
         var a = ""
-        var ss = arrayOf("av", "ss", "live", "au", "cv")
+        var ss = arrayOf("av", "ss", "live", "au", "cv", "ep")
         for (s in ss) {
             a = getAid(keyword, "$s(\\d+)")
             if (a != "") {
