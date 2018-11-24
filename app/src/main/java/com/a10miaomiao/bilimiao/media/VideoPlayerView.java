@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -19,7 +21,11 @@ import com.a10miaomiao.bilimiao.R;
 import com.a10miaomiao.bilimiao.media.callback.MediaController;
 import com.a10miaomiao.bilimiao.media.callback.MediaPlayerListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -73,6 +79,11 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
     private Uri mUri;
 
+    /**
+     * 多个视频段
+     */
+    private List<VideoSource> mSources;
+
     private Map<String, String> mHeaders;
 
     private long mDuration;
@@ -88,6 +99,14 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     private SurfaceHolder mSurfaceHolder = null;
 
     private IMediaPlayer mMediaPlayer = null;
+
+    /**
+     * 多个播放器
+     */
+    private List<IMediaPlayer> mediaPlayers = null;
+
+
+    private int index = 0;
 
     private int mVideoWidth;
 
@@ -119,6 +138,10 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
     private OnControllerEventsListener mOnControllerEventsListener;
 
+    private GestureDetector gestureDetector;
+
+    private OnGestureEventsListener onGestureEventsListener;
+
     private int mCurrentBufferPercentage;
 
     private long mSeekWhenPrepared;
@@ -135,7 +158,8 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
         public void onVideoSizeChanged(IMediaPlayer mp, int width, int height,
                                        int sarNum, int sarDen) {
-
+            if (mp != mMediaPlayer)
+                return;
             DebugLog.dfmt(TAG, "onVideoSizeChanged: (%dx%d)", width, height);
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
@@ -149,7 +173,8 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     OnPreparedListener mPreparedListener = new OnPreparedListener() {
 
         public void onPrepared(IMediaPlayer mp) {
-
+            if (mp != mMediaPlayer)
+                return;
             DebugLog.d(TAG, "onPrepared");
             mCurrentState = STATE_PREPARED;
             mTargetState = STATE_PLAYING;
@@ -188,7 +213,14 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     private OnCompletionListener mCompletionListener = new OnCompletionListener() {
 
         public void onCompletion(IMediaPlayer mp) {
-
+            if (mp != mMediaPlayer)
+                return;
+            index++;
+            Log.d("---onCompletionindex---", String.valueOf(index));
+            if (index < mSources.size()) {
+                switchPlayer(index);//播放下一个视频
+                return;
+            }
             DebugLog.d(TAG, "onCompletion");
             mCurrentState = STATE_PLAYBACK_COMPLETED;
             mTargetState = STATE_PLAYBACK_COMPLETED;
@@ -202,7 +234,8 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     private OnErrorListener mErrorListener = new OnErrorListener() {
 
         public boolean onError(IMediaPlayer mp, int framework_err, int impl_err) {
-
+            if (mp != mMediaPlayer)
+                return false;
             DebugLog.dfmt(TAG, "Error: %d, %d", framework_err, impl_err);
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
@@ -238,7 +271,8 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
 
         public void onBufferingUpdate(IMediaPlayer mp, int percent) {
-
+            if (mp != mMediaPlayer)
+                return;
             mCurrentBufferPercentage = percent;
             if (mOnBufferingUpdateListener != null)
                 mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
@@ -249,7 +283,8 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
         @Override
         public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-
+            if (mp != mMediaPlayer)
+                return false;
             DebugLog.dfmt(TAG, "onInfo: (%d, %d)", what, extra);
             if (mOnInfoListener != null) {
                 mOnInfoListener.onInfo(mp, what, extra);
@@ -284,7 +319,6 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
         public void surfaceChanged(SurfaceHolder holder, int format, int w,
                                    int h) {
-
             mSurfaceHolder = holder;
             if (mMediaPlayer != null) {
                 mMediaPlayer.setDisplay(mSurfaceHolder);
@@ -307,7 +341,6 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
-
             mSurfaceHolder = holder;
             if (mMediaPlayer != null && mCurrentState == STATE_SUSPEND
                     && mTargetState == STATE_RESUME) {
@@ -325,6 +358,62 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
                 mMediaController.hide();
             if (mCurrentState != STATE_SUSPEND)
                 release(true);
+        }
+    };
+
+    private int isXScroll = -1; //-1表示方向未知，0表示水平，1表示垂直
+    private GestureDetector.SimpleOnGestureListener simpleOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            isXScroll = -1;
+            if (onGestureEventsListener != null) {
+                onGestureEventsListener.onDown(e);
+            }
+            //返回false的话只能响应长摁事件
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (onGestureEventsListener != null) {
+                if (onGestureEventsListener.isLocked())
+                    return super.onScroll(e1, e2, distanceX, distanceY);
+                if (isXScroll == -1) { // 未知
+                    isXScroll = Math.abs(distanceX) > Math.abs(distanceY) ? 0 : 1;
+                }
+                if (isXScroll == 0) { // 水平方向
+                    return onGestureEventsListener.onXScroll(e1, e2, distanceX);
+                } else if (isXScroll == 1) { // 垂直方向
+                    return onGestureEventsListener.onYScroll(e1, e2, distanceY);
+                }
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            if (onGestureEventsListener != null)
+                if (onGestureEventsListener.isLocked())
+                    return false;
+            if (isPlaying()) {
+                pause();
+            } else {
+                start();
+            }
+            return false;
+        }
+
+        /**
+         * 单击
+         * @param e
+         * @return
+         */
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (isInPlaybackState() && mMediaController != null)
+                toggleMediaControlsVisiblity();
+            return false;
         }
     };
 
@@ -411,15 +500,14 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
         mTargetState = STATE_IDLE;
         if (ctx instanceof Activity)
             ((Activity) ctx).setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
     }
 
     public boolean isValid() {
-
         return (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid());
     }
 
     public void setVideoPath(String path) {
-
         setVideoURI(Uri.parse(path));
     }
 
@@ -436,12 +524,21 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
         invalidate();
     }
 
+    public void setVideoURI(List<VideoSource> sources, Map<String, String> headers) {
+        mSources = sources;
+        mHeaders = headers;
+        mSeekWhenPrepared = 0;
+        openVideo();
+        requestLayout();
+        invalidate();
+    }
+
+
     public void setUserAgent(String ua) {
         mUserAgent = ua;
     }
 
     public void stopPlayback() {
-
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
@@ -451,8 +548,98 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
         }
     }
 
-    private void openVideo() {
 
+    private void openVideo() {
+        if (mSources == null || mSurfaceHolder == null)
+            return;
+
+        Intent freshIntent = new Intent();
+        freshIntent.setAction("com.android.music.musicservicecommand.pause");
+        freshIntent.putExtra("command","pause");
+        getContext().sendBroadcast(freshIntent);
+
+        release(false);
+        try {
+            mDuration = -1;
+            mCurrentBufferPercentage = 0;
+            mediaPlayers = new ArrayList();
+            for (VideoSource videoSource : mSources) {
+                mediaPlayers.add(initPlayer(videoSource.getUri()));
+            }
+            mMediaPlayer = mediaPlayers.get(0);
+            mMediaPlayer.setDisplay(mSurfaceHolder);
+            mMediaPlayer.setScreenOnWhilePlaying(true);
+            mMediaPlayer.prepareAsync();
+            mCurrentState = STATE_PREPARING;
+            attachMediaController();
+        } catch (IOException ex) {
+            DebugLog.e(TAG, "Unable to open content: " + mUri, ex);
+            mCurrentState = STATE_ERROR;
+            mTargetState = STATE_ERROR;
+            mErrorListener.onError(mMediaPlayer,
+                    IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
+            return;
+        } catch (IllegalArgumentException ex) {
+            DebugLog.e(TAG, "Unable to open content: " + mUri, ex);
+            mCurrentState = STATE_ERROR;
+            mTargetState = STATE_ERROR;
+            mErrorListener.onError(mMediaPlayer,
+                    IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
+            return;
+        }
+    }
+
+    /**
+     * 初始化一个新的播放器
+     *
+     * @param uri
+     * @return
+     * @throws IOException
+     */
+    private IMediaPlayer initPlayer(@NotNull Uri uri) throws IOException {
+        IjkMediaPlayer ijkMediaPlayer = null;
+
+        ijkMediaPlayer = new IjkMediaPlayer();
+        ijkMediaPlayer.setLogEnabled(false);
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", "48");
+        if (mUserAgent != null) {
+            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", mUserAgent);
+            //ijkMediaPlayer.setAvFormatOption("user_agent", mUserAgent);
+        }
+
+        mMediaPlayer = ijkMediaPlayer;
+        assert mMediaPlayer != null;
+        ijkMediaPlayer.setOnPreparedListener(mPreparedListener);
+        ijkMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
+        ijkMediaPlayer.setOnCompletionListener(mCompletionListener);
+        ijkMediaPlayer.setOnErrorListener(mErrorListener);
+        ijkMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
+        ijkMediaPlayer.setOnInfoListener(mInfoListener);
+        ijkMediaPlayer.setOnSeekCompleteListener(mSeekCompleteListener);
+
+        if (mHeaders != null) {
+            ijkMediaPlayer.setDataSource(this.getContext(), uri, mHeaders);
+        } else {
+            ijkMediaPlayer.setDataSource(this.getContext(), uri);
+        }
+
+        return ijkMediaPlayer;
+    }
+
+    /**
+     * 切换播放器
+     */
+    private void switchPlayer(int index) {
+        mMediaPlayer.stop();
+        mMediaPlayer = mediaPlayers.get(index);
+        this.index = index;
+        mMediaPlayer.setDisplay(mSurfaceHolder);
+        mMediaPlayer.setScreenOnWhilePlaying(true);
+        mMediaPlayer.prepareAsync();
+        start();
+    }
+
+    private void old_openVideo() {
         if (mUri == null || mSurfaceHolder == null)
             return;
 
@@ -491,9 +678,9 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
             mMediaPlayer.setOnInfoListener(mInfoListener);
             mMediaPlayer.setOnSeekCompleteListener(mSeekCompleteListener);
             if (mUri != null) {
-                if (mHeaders != null){
+                if (mHeaders != null) {
                     mMediaPlayer.setDataSource(this.getContext(), mUri, mHeaders);
-                }else {
+                } else {
                     mMediaPlayer.setDataSource(this.getContext(), mUri);
                 }
             }
@@ -518,6 +705,7 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
             return;
         }
     }
+
 
     public void setMediaController(MediaController controller) {
 
@@ -571,33 +759,36 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     }
 
     public void setOnInfoListener(OnInfoListener l) {
-
         mOnInfoListener = l;
     }
 
     public void setOnControllerEventsListener(OnControllerEventsListener l) {
-
         mOnControllerEventsListener = l;
     }
 
     private void release(boolean cleartargetstate) {
-
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            mCurrentState = STATE_IDLE;
-            if (cleartargetstate)
-                mTargetState = STATE_IDLE;
+        mCurrentState = STATE_IDLE;
+        if (mediaPlayers == null) {
+            return;
         }
+        for (IMediaPlayer im : mediaPlayers) {
+            if (im != null) {
+                mMediaPlayer.reset();
+                mMediaPlayer.release();
+            }
+        }
+        if (cleartargetstate)
+            mTargetState = STATE_IDLE;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
-        if (isInPlaybackState() && mMediaController != null)
-            toggleMediaControlsVisiblity();
-        return false;
+        if (ev.getAction() == MotionEvent.ACTION_UP) {
+            if (onGestureEventsListener != null)
+                onGestureEventsListener.onUp(ev,isXScroll == 0);
+            isXScroll = -1;
+        }
+        return gestureDetector.onTouchEvent(ev);
     }
 
     @Override
@@ -653,7 +844,6 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
 
     @Override
     public void start() {
-
         if (isInPlaybackState()) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
@@ -687,60 +877,90 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
     }
 
     @Override
-    public int getDuration() {
-
+    public long getDuration() {
         if (isInPlaybackState()) {
             if (mDuration > 0)
                 return (int) mDuration;
-            mDuration = mMediaPlayer.getDuration();
-            return (int) mDuration;
+            /** 修改 获取全部播放源的总长度 */
+            mDuration = 0;
+            for (VideoSource source : mSources) {
+                mDuration += source.getLength();
+            }
+            return mDuration;
         }
         mDuration = -1;
-        return (int) mDuration;
+        return mDuration;
     }
 
     @Override
-    public int getCurrentPosition() {
-
+    public long getCurrentPosition() {
         if (isInPlaybackState()) {
             long position = mMediaPlayer.getCurrentPosition();
-            return (int) position;
+            long duration = 0;
+            for (int i = 0; i < index; i++) {
+                duration += mSources.get(i).getLength();
+            }
+            return (position + duration);
         }
         return 0;
     }
 
+    //    @Override
+//    public void seekTo2(long msec){
+//        if (mSources == null)
+//            return;
+//
+//    }
+    boolean seekToFlag = false;
+
     @Override
     public void seekTo(long msec) {
-
+        if (mSources == null || seekToFlag)
+            return;
+        seekToFlag = true;
+        int i = 0;
+        long length = mSources.get(i).getLength(); //视频长度
+        long beforeLength = 0;
+        while (msec > length) {
+            i++;
+            beforeLength = length;
+            length += mSources.get(i).getLength();
+        }
+        msec -= beforeLength;
+        if (i != index) {
+            switchPlayer(i);
+        }
         if (isInPlaybackState()) {
             mMediaPlayer.seekTo(msec);
             mSeekWhenPrepared = 0;
         } else {
             mSeekWhenPrepared = msec;
         }
+        seekToFlag = false;
     }
 
     @Override
     public boolean isPlaying() {
-
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
     @Override
-    public int getBufferPercentage() {
-
-        if (mMediaPlayer != null)
-            return mCurrentBufferPercentage;
+    public long getBufferPercentage() {
+        if (mMediaPlayer != null) {
+            long duration = 0;
+            for (int i = 0; i < index; i++) {
+                duration += mSources.get(i).getLength();
+            }
+            return (mCurrentBufferPercentage + duration);
+        }
         return 0;
     }
 
     public int getVideoWidth() {
-
         return mVideoWidth;
     }
 
     public int getVideoHeight() {
-
         return mVideoHeight;
     }
 
@@ -765,10 +985,26 @@ public class VideoPlayerView extends SurfaceView implements MediaPlayerListener 
         return mCanSeekForward;
     }
 
+    public void setOnGestureEventsListener(OnGestureEventsListener onGestureEventsListener) {
+        this.onGestureEventsListener = onGestureEventsListener;
+    }
+
     public interface OnControllerEventsListener {
 
         void onVideoPause();
 
         void OnVideoResume();
+    }
+
+    public interface OnGestureEventsListener {
+        boolean isLocked();
+
+        boolean onXScroll(MotionEvent e1, MotionEvent e2, float distanceX);
+
+        boolean onYScroll(MotionEvent e1, MotionEvent e2, float distanceY);
+
+        void onDown(MotionEvent e);
+
+        void onUp(MotionEvent e,boolean isXScroll);
     }
 }

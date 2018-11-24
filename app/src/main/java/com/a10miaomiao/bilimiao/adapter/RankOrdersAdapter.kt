@@ -3,46 +3,34 @@ package com.a10miaomiao.bilimiao.adapter
 import android.util.TypedValue
 import android.widget.TextView
 import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import com.a10miaomiao.bilimiao.utils.log
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-
+import kotlinx.android.synthetic.main.fragment_region_details.*
 
 
 /**
  * Created by 10喵喵 on 2017/11/23.
  */
-class RankOrdersAdapter(list: Array<String>) : BaseQuickAdapter<RankOrdersAdapter.Data, BaseViewHolder>(R.layout.item_rank_orders,RankOrdersAdapter.create(list)) {
+class RankOrdersAdapter(list: List<String>) : BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_rank_orders, list) {
+
+    constructor(list: Array<String>) : this(list.toList())
+
     var checkItemPosition = 0
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    override fun convert(helper: BaseViewHolder?, item: Data?) {
+    override fun convert(helper: BaseViewHolder?, item: String?) {
         var text = helper!!.getView<TextView>(R.id.text)
-        text.text = item?.text
+        text.text = item
         text.setTextColor(
-                if(item!!.index == checkItemPosition) {
-                    val typedValue = TypedValue()
-                    mContext.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-                    mContext.resources.getColor(typedValue.resourceId)
-                }else
+                if(helper.position == checkItemPosition)
+                    mContext.resources.getColor(ThemeHelper.getColorAccent(mContext))
+                else
                     mContext.resources.getColor(R.color.text_black)
         )
     }
-
-    companion object {
-        fun create(s: Array<String>): List<Data> {
-            var list = ArrayList<Data>()
-            (0 until s.size).mapTo(list) { Data(s[it], it) }
-            log(list.size)
-            return list
-        }
-    }
-
-    data class Data(
-            var text: String,
-            var index: Int
-    )
 }

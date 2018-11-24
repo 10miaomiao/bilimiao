@@ -13,15 +13,16 @@ public interface MediaPlayerListener
 
     void pause();
 
-    int getDuration();
+    long getDuration();
 
-    int getCurrentPosition();
+    long getCurrentPosition();
 
     void seekTo(long pos);
+//    void seekTo2(long pos);
 
     boolean isPlaying();
 
-    int getBufferPercentage();
+    long getBufferPercentage();
 
     boolean canPause();
 }

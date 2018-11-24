@@ -49,10 +49,10 @@ class RegionTypeDetailsFragment : BaseFragment() {
     var popupWindow: RankOrdersPopupWindow? = null
 
     val keywordDB: KeyWordDB by lazy {
-        KeyWordDB(activity, KeyWordDB.DB_NAME, null, 1)
+        KeyWordDB(activity!!, KeyWordDB.DB_NAME, null, 1)
     }
     val upperDB: PreventUpperDB by lazy {
-        PreventUpperDB(activity, PreventUpperDB.DB_NAME, null, 1)
+        PreventUpperDB(activity!!, PreventUpperDB.DB_NAME, null, 1)
     }
     lateinit var pKeywords: ArrayList<String>
     lateinit var pUppers: ArrayList<PreventUpperDB.Upper>
@@ -67,13 +67,13 @@ class RegionTypeDetailsFragment : BaseFragment() {
     override fun finishCreateView(savedInstanceState: Bundle?) {
         pKeywords = keywordDB.queryAllHistory()
         pUppers = upperDB.queryAllHistory()
-        loadMoreView = LoadMoreView(activity)
+        loadMoreView = LoadMoreView(activity!!)
         initRecyclerView()
         initListener()
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        rid = arguments.getInt(ConstantUtil.EXTRA_RID)
+        rid = arguments!!.getInt(ConstantUtil.EXTRA_RID)
         reTime()
         log(rid!!)
     }
@@ -82,7 +82,7 @@ class RegionTypeDetailsFragment : BaseFragment() {
      * 设置listener的操作
      */
     private fun initListener() {
-        popupWindow = RankOrdersPopupWindow(activity, line, arrayOf("播放数", "评论数", "收藏数", "硬币数", "弹幕数"))
+        popupWindow = RankOrdersPopupWindow(activity!!, line, arrayOf("播放数", "评论数", "收藏数", "硬币数", "弹幕数"))
         popupWindow?.onCheckItemPositionChanged = { text, position ->
             text_rankOrdrer = text
             tv_rank_order.text = text_rankOrdrer
@@ -94,14 +94,14 @@ class RegionTypeDetailsFragment : BaseFragment() {
         tv_rank_order.popMenu = popupWindow
 
         selector_date.setOnClickListener {
-            SelectorDateActivity.launch(activity)
+            SelectorDateActivity.launch(activity!!)
         }
 
 //        val typedValue = TypedValue()
 //        activity.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
 //        swipe_ly.setColorSchemeResources(typedValue.resourceId, typedValue.resourceId,
 //                typedValue.resourceId, typedValue.resourceId)
-        val color = ThemeHelper.getColorAccent(context)
+        val color = ThemeHelper.getColorAccent(context!!)
         swipe_ly.setColorSchemeResources(color, color,color, color)
 
 
@@ -121,18 +121,18 @@ class RegionTypeDetailsFragment : BaseFragment() {
             adapter = mAdapter
         }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].id)
+            IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_VIDEO, archives[position].id)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看封面")
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {
                             0 -> {
-                                InfoActivity.launch(activity, archives[position].id, "av")
+                                InfoActivity.launch(activity!!, archives[position].id, "av")
                             }
                             1 -> {
-                                SettingActivity.selectPalyer(activity)
+                                SettingActivity.selectPalyer(activity!!)
                             }
                         }
                     })
@@ -166,7 +166,7 @@ class RegionTypeDetailsFragment : BaseFragment() {
      * 刷新日期，有更改返回true
      */
     private fun reTime(): Boolean {
-        val selectorDateUtil = SelectorDateUtil(activity)
+        val selectorDateUtil = SelectorDateUtil(activity!!)
         if (timeFrom != null || timeTo != null) {
             if (timeFrom == selectorDateUtil.timeFrom && timeTo == selectorDateUtil.timeTo) {
                 selector_date?.text = SelectorDateUtil.formatDate(timeFrom!!, "-") + "至" +

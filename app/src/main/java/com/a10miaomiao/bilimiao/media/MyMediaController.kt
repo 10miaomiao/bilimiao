@@ -8,6 +8,8 @@ import android.widget.SeekBar
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.media.callback.MediaController
 import com.a10miaomiao.bilimiao.media.callback.MediaPlayerListener
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
+import kotlinx.android.synthetic.main.content_video_info.view.*
 import kotlinx.android.synthetic.main.layout_media_controller.view.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -24,14 +26,14 @@ import java.util.concurrent.TimeUnit
 class MyMediaController @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr), MediaController {
-
     private var mPlayer: MediaPlayerListener? = null
-    private var mDragging = false    //是否拖拽
-    private var mDuration = 0       //播放总进度
+    var mDragging = false    //是否拖拽
+    private var mDuration = 0L      //播放总进度
     private var mDanmakuShow = true
     private var _videoBackEvent: (() -> Unit)? = null
     private var _danmakuSwitchEvent: ((isShow: Boolean) -> Unit)? = null
-
+    private var _qualityEvent: (() -> Unit)? = null
+    var isLocked = false
     //private var mProgressSubscribe: Subscription
 
     init {
@@ -51,6 +53,9 @@ class MyMediaController @JvmOverloads constructor(
     fun setDanmakuSwitchEvent(event: ((isShow: Boolean) -> Unit)){
         _danmakuSwitchEvent = event
     }
+    fun setQualityEvent(event: (() -> Unit)){
+        _qualityEvent = event
+    }
 
     private fun initView(){
         mBackIV.setOnClickListener {
@@ -58,17 +63,25 @@ class MyMediaController @JvmOverloads constructor(
         }
         mDanmakuSwitchLayout.setOnClickListener {
             if (mDanmakuShow){
-                mDanmakuSwitchIV.setImageResource(R.drawable.bili_player_danmaku_is_open)
-                mDanmakuSwitchTV.text = "弹幕开"
-                _danmakuSwitchEvent?.invoke(true)
-                mDanmakuShow = false
-            }else{
                 mDanmakuSwitchIV.setImageResource(R.drawable.bili_player_danmaku_is_closed);
                 mDanmakuSwitchTV.text = "弹幕关"
-                _danmakuSwitchEvent?.invoke(false)
-                mDanmakuShow = true
+            }else{
+                mDanmakuSwitchIV.setImageResource(R.drawable.bili_player_danmaku_is_open)
+                mDanmakuSwitchTV.text = "弹幕开"
             }
+            mDanmakuShow = !mDanmakuShow
+            _danmakuSwitchEvent?.invoke(mDanmakuShow)
         }
+        mQualityLayout.setOnClickListener {
+            _qualityEvent?.invoke()
+        }
+        mLockLayout.setOnClickListener{
+            lock()
+        }
+        val openLock = { v: View -> unlock()}
+        mOpenLockLeftIV.setOnClickListener(openLock)
+        mOpenLockRightIV.setOnClickListener(openLock)
+
         mProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val newposition = mDuration * progress / 1000
@@ -95,6 +108,8 @@ class MyMediaController @JvmOverloads constructor(
         mPauseButton.setOnClickListener(this::doPauseResume)
         mTvPlay.setOnClickListener(this::doPauseResume)
         updatePausePlay()
+        mHeaderLayout.setOnTouchListener { view, motionEvent -> true }
+        mMediaMontrollerControls.setOnTouchListener { view, motionEvent -> true }
     }
 
 
@@ -122,6 +137,24 @@ class MyMediaController @JvmOverloads constructor(
         return this.visibility == View.VISIBLE
     }
 
+    fun lock() {
+        isLocked = true
+        mHeaderLayout.visibility = View.GONE
+        mMediaMontrollerControls.visibility = View.GONE
+        mTvPlay.visibility = View.GONE
+        mOpenLockLeftIV.visibility =  View.VISIBLE
+        mOpenLockRightIV.visibility =  View.VISIBLE
+    }
+    fun unlock() {
+        isLocked = false
+        mHeaderLayout.visibility = View.VISIBLE
+        mMediaMontrollerControls.visibility = View.VISIBLE
+        mTvPlay.visibility = View.VISIBLE
+        mOpenLockLeftIV.visibility =  View.GONE
+        mOpenLockRightIV.visibility =  View.GONE
+    }
+
+
     override fun setMediaPlayer(player: MediaPlayerListener) {
         mPlayer = player
     }
@@ -133,7 +166,7 @@ class MyMediaController @JvmOverloads constructor(
     /**
      * 设置播放进度
      */
-    private fun setProgress(): Int{
+    private fun setProgress(): Long{
         if(mPlayer == null || mDragging){
             return 0
         }
@@ -145,12 +178,19 @@ class MyMediaController @JvmOverloads constructor(
                 mProgress.progress = pos.toInt()
             }
             val percent = mPlayer!!.bufferPercentage
-            mProgress.secondaryProgress = percent * 10
+            mProgress.secondaryProgress = (percent * 10).toInt()
         }
         mDuration = duration
         mEndTime?.text = generateTime(mDuration)
         mCurrentTime?.text = generateTime(position)
         return position
+    }
+
+    fun setProgress(position: Long){
+        val duration = mPlayer!!.duration
+        val pos = 1000L * position / duration
+        mProgress.progress = pos.toInt()
+        mCurrentTime?.text = generateTime(position)
     }
 
     private fun updatePausePlay() {
@@ -180,7 +220,18 @@ class MyMediaController @JvmOverloads constructor(
     }
 
     companion object {
-        private fun generateTime(position: Int): String {
+        fun generateTime(position: Int): String {
+            val totalSeconds = (position / 1000.0 + 0.5).toInt()
+            val seconds = totalSeconds % 60
+            val minutes = totalSeconds / 60 % 60
+            val hours = totalSeconds / 3600
+            return if (hours > 0) {
+                String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
+            } else {
+                String.format(Locale.US, "%02d:%02d", minutes, seconds)
+            }
+        }
+        fun generateTime(position: Long): String {
             val totalSeconds = (position / 1000.0 + 0.5).toInt()
             val seconds = totalSeconds % 60
             val minutes = totalSeconds / 60 % 60

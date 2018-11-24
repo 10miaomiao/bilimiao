@@ -40,5 +40,23 @@
             android:textColor="@color/colorWhite"
             android:id="@+id/mText"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mCenterLayout"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:background="#99000000"
+        android:padding="8dp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mCenterTv"
+            android:text="音量：50%"
+            android:textColor="#ffffff"
+            android:textSize="16sp"/>
+    </FrameLayout>
 </FrameLayout>
 

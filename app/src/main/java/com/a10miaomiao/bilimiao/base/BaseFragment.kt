@@ -14,10 +14,11 @@ import com.a10miaomiao.bilimiao.utils.log
  */
 
 abstract class BaseFragment : LazyLoadFragment(){
-    private var rootView: View ?= null
-    protected var mActivity: Activity ?= null
+    private var rootView: View? = null
+    protected var mActivity: Activity? = null
     protected abstract var layoutResId : Int
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         if (rootView == null) {
             rootView = inflater!!.inflate(layoutResId, container, false)
             initView(rootView)
@@ -27,11 +28,10 @@ abstract class BaseFragment : LazyLoadFragment(){
             val parent = rootView?.parent as ViewGroup
             parent?.removeView(rootView)
         }
-        log(1)
-        return rootView
+        return rootView!!
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         finishCreateView(savedInstanceState)
     }

@@ -48,7 +48,7 @@ object ThemeHelper{
         return arrayOf(
                 R.color.pink,
                 R.color.red,
-                R.color.yellow,
+                R.color.orange,
                 R.color.green,
                 R.color.blue,
                 R.color.purple,

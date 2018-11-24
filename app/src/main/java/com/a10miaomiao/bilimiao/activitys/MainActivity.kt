@@ -38,25 +38,44 @@ import kotlin.collections.ArrayList
  * Created by 10喵喵 on 2017/9/16.
  */
 class MainActivity : BaseActivity() {
-    var regionTypes = ArrayList<RegionTypesInfo.DataBean>()
-    var info: Info? = null
-    var searchFragment = SearchBoxFragment.newInstance()
+    private var regionTypes = ArrayList<RegionTypesInfo.DataBean>()
+    private var info: Info? = null
+    private var searchFragment = SearchBoxFragment.newInstance()
 
-    var homeRegionList = ArrayList<HomeRegionInfo>()
-    var homeRegionAdapter: HomeRegionItemAdapter? = null
+    private val homeRegionList = ArrayList<HomeRegionInfo>()
+    private val homeRegionAdapter = HomeRegionItemAdapter(homeRegionList)
+    private val homeMoreList = arrayListOf(
+            HomeRegionInfo("视频下载", R.drawable.ic_home_more_download),
+            HomeRegionInfo("排行榜", R.drawable.ic_home_more_rank),
+            HomeRegionInfo("屏蔽设置", R.drawable.ic_home_more_prevent)
+    )
+    private val homeMoreAdapter = HomeRegionItemAdapter(homeMoreList)
+
     override var layoutResID = R.layout.activity_main
 
     override fun initViews(savedInstanceState: Bundle?) {
-        //searchClipboard()
-        homeRegionAdapter = HomeRegionItemAdapter(homeRegionList)
         recycle_region.apply {
             setHasFixedSize(true)
             isNestedScrollingEnabled = false
             layoutManager = GridLayoutManager(activity, 5)
             adapter = homeRegionAdapter
         }
-        homeRegionAdapter!!.setOnItemClickListener { adapter, view, position ->
+        homeRegionAdapter.setOnItemClickListener { adapter, view, position ->
             RegionTypeDetailsActivity.launch(activity, regionTypes[position])
+        }
+
+        recycle_more.apply {
+            setHasFixedSize(true)
+            isNestedScrollingEnabled = false
+            layoutManager = GridLayoutManager(activity, 4)
+            adapter = homeMoreAdapter
+        }
+        homeMoreAdapter.setOnItemClickListener { adapter, view, position ->
+            when(position){
+                0 -> DownloadActivity.launch(activity)
+                1 -> RankActivity.launch(activity)
+                2 -> EditPreventKeywordActivity.launch(activity)
+            }
         }
 
         searchFragment.onSearchClick = {
@@ -96,17 +115,8 @@ class MainActivity : BaseActivity() {
             popupMenu.setOnMenuItemClickListener(this::onMenuItemClick)
             popupMenu.show()
         }
-        btn_time_line.setOnClickListener {
+        layout_time_line.setOnClickListener {
             SelectorDateActivity.launch(activity)
-        }
-        btn_rank.setOnClickListener {
-            RankActivity.launch(activity)
-        }
-        btn_edit_keyword.setOnClickListener {
-            EditPreventKeywordActivity.launch(activity)
-        }
-        btn_downlaod.setOnClickListener {
-            DownloadActivity.launch(activity)
         }
 
         mButton.setOnClickListener {
@@ -132,20 +142,18 @@ class MainActivity : BaseActivity() {
         //分区列表
         homeRegionList.clear()
         homeRegionList.addAll(HomeRegionInfo.create(activity))
-        homeRegionAdapter?.notifyDataSetChanged()
+        homeRegionAdapter.notifyDataSetChanged()
         //读取分区列表
         Observable.just(readAssetsJson())
                 .compose(bindToLifecycle())
-                .map({ Gson().fromJson(it, RegionTypesInfo::class.java) })
-                .map({ it.data })
+                .map { Gson().fromJson(it, RegionTypesInfo::class.java).data }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ dataBeans ->
                     regionTypes.addAll(dataBeans)
-                }, { throwable ->
+                }, { _ ->
                     toast("读取分区列表遇到错误")
                 })
-
     }
 
     /**
@@ -154,14 +162,30 @@ class MainActivity : BaseActivity() {
     private fun setTimeLineCard() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
         if (prefs.getBoolean("home_time_line", true)) {
-            card_time_line.visibility = View.VISIBLE
+            layout_time_line.visibility = View.VISIBLE
             val selectorDateUtil = SelectorDateUtil(activity)
-            val timeFrom = SelectorDateUtil.formatDate(selectorDateUtil.timeFrom!!, "/")
-            val timeTo = SelectorDateUtil.formatDate(selectorDateUtil.timeTo!!, "/")
+            val timeFrom = SelectorDateUtil.formatDate(selectorDateUtil.timeFrom!!, "-")
+            val timeTo = SelectorDateUtil.formatDate(selectorDateUtil.timeTo!!, "-")
             tv_time_line.text = "${timeFrom}至${timeTo}"
         } else {
-            card_time_line.visibility = View.GONE
+            layout_time_line.visibility = View.GONE
         }
+    }
+
+    /**
+     * 设置更改功能卡片
+     */
+    private fun setMoreCard() {
+        //随机显示标题
+//        val titles = arrayOf("更多", "", "时光姬", "时光姬")
+        val subtitles = arrayOf("ε=ε=ε=┏(゜ロ゜;)┛", "(　o=^•ェ•)o　┏━┓", "(/▽＼)", "ヽ(✿ﾟ▽ﾟ)ノ")
+        val random = Random()
+//        title_more.text = titles[random.nextInt(titles.size)]
+        subtitle_more.text = subtitles[random.nextInt(subtitles.size)]
+        //功能列表
+        homeMoreList.clear()
+        homeMoreList.addAll(HomeRegionInfo.create(activity))
+        homeMoreAdapter.notifyDataSetChanged()
     }
 
     override fun initToolBar() {
@@ -179,7 +203,7 @@ class MainActivity : BaseActivity() {
      * 搜索
      */
     private fun search(key: String): Info? {
-        var a = ""
+        var a: String
         var ss = arrayOf("av", "ss", "live", "au", "cv", "ep")
         for (s in ss) {
             a = getAid(key, "$s(\\d+)")

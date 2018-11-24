@@ -25,7 +25,7 @@ import java.io.File
 class DownloadingFragment : BaseFragment() {
     override var layoutResId = R.layout.fragment_download
     val db: DownloadDB by lazy {
-        DownloadDB(activity, DownloadDB.DB_NAME, null, 1)
+        DownloadDB(activity!!, DownloadDB.DB_NAME, null, 1)
     }
 
     var mAdapter: DownloadAdapter? = null
@@ -40,7 +40,7 @@ class DownloadingFragment : BaseFragment() {
         }
         mAdapter!!.setOnItemClickListener { adapter, view, position ->
             if (list[position].status == DownloadInfo.DOWNLOADING) {
-                DownloadService.pause(activity)
+                DownloadService.pause(activity!!)
             } else {
                 for (item in list) {
                     if (item.status == DownloadInfo.DOWNLOADING) {
@@ -48,26 +48,34 @@ class DownloadingFragment : BaseFragment() {
                         break
                     }
                 }
-                DownloadService.start(activity, list[position].cid)
+                DownloadService.start(activity!!, list[position].cid)
             }
         }
         mAdapter!!.setOnItemLongClickListener { adapter, view, position ->
-            AlertDialog.Builder(activity)
-                    .setItems(arrayOf("取消下载"), { dialogInterface, i ->
-                        DownloadService.del(activity, list[i].cid)
-                        var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/b站视频/"
-                        var f1 = File(path + list[i].fileName + ".temp")
-                        var f2 = File(path + list[i].name + "/")
-                        if (f1.exists()) {
-                            f1.delete()
-                        }
-                        if(f2.exists()) {
-                            for (f in f2.listFiles()){
-                                f.delete()
+            val info = list[position]
+            AlertDialog.Builder(activity!!)
+                    .setItems(arrayOf("取消下载", "重新下载", "取消全部")) { dialogInterface, i ->
+                        when (i) {
+                            // 取消下载
+                            0 -> {
+                                DownloadService.del(activity!!, info.cid)
+                                delDownloadFlie(info)
                             }
-                            f2.delete()
+                            // 重新下载
+                            1 -> {
+                                DownloadService.pause(activity!!)
+                                delDownloadFlie(info)
+                                DownloadService.start(activity!!, info.cid)
+                            }
+                            // 取消全部
+                            2 -> {
+                                val _list = ArrayList<DownloadInfo>()
+                                _list.addAll(list)
+                                DownloadService.delAll(activity!!)
+                                _list.forEach { delDownloadFlie(it) }
+                            }
                         }
-                    })
+                    }
                     .show()
             true
         }
@@ -82,7 +90,25 @@ class DownloadingFragment : BaseFragment() {
     override fun loadData() {
         list.addAll(db.queryArge("status!=?", arrayOf(DownloadInfo.FINISH.toString())))
         mAdapter?.notifyDataSetChanged()
-        img_null?.visibility = if(list.size == 0) View.VISIBLE else View.GONE
+        img_null?.visibility = if (list.size == 0) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * 删除下载文件
+     */
+    private fun delDownloadFlie(info: DownloadInfo) {
+        var path = Environment.getExternalStorageDirectory().path + "/BiliMiao/b站视频/"
+        var f1 = File(path + info.fileName + ".temp")
+        var f2 = File(path + info.name + "/")
+        if (f1.exists()) {
+            f1.delete()
+        }
+        if (f2.exists()) {
+            for (f in f2.listFiles()) {
+                f.delete()
+            }
+            f2.delete()
+        }
     }
 
     /**

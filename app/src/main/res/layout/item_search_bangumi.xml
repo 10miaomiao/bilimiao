@@ -61,7 +61,9 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/default_tiny_padding"
             android:textColor="@color/black_alpha_45"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:ellipsize="end"/>
 
     </LinearLayout>
 </RelativeLayout>

@@ -6,8 +6,7 @@
     android:padding="5dp">
 
     <!--搜索框-->
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView
         android:id="@+id/search_card_view"
         style="@style/card"
         android:layout_width="match_parent"
@@ -103,10 +102,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/shape_corner_white">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_search_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_search_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
         <TextView

@@ -34,12 +34,12 @@ class BangumiRankFragment : BaseFragment() {
     private var mAdapter: BangumiRankAdapter? = null
 
     val keywordDB: KeyWordDB by lazy {
-        KeyWordDB(activity, KeyWordDB.DB_NAME, null, 1)
+        KeyWordDB(activity!!, KeyWordDB.DB_NAME, null, 1)
     }
     lateinit var pKeywords: ArrayList<String>
 
     override fun finishCreateView(savedInstanceState: Bundle?) {
-        loadMoreView = LoadMoreView(activity)
+        loadMoreView = LoadMoreView(activity!!)
 
         pKeywords = keywordDB.queryAllHistory()
 
@@ -51,18 +51,18 @@ class BangumiRankFragment : BaseFragment() {
             adapter = mAdapter
         }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_BANGUMI, archives[position].season_id)
+            IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_BANGUMI, archives[position].season_id)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看封面")
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {
                             0 -> {
-                                InfoActivity.launch(activity, archives[position].season_id, "anime")
+                                InfoActivity.launch(activity!!, archives[position].season_id, "anime")
                             }
                             1 -> {
-                                SettingActivity.selectPalyer(activity)
+                                SettingActivity.selectPalyer(activity!!)
                             }
                         }
                     })
@@ -71,14 +71,14 @@ class BangumiRankFragment : BaseFragment() {
             true
         }
 
-        val color = ThemeHelper.getColorAccent(context)
+        val color = ThemeHelper.getColorAccent(context!!)
         swipe_ly.setColorSchemeResources(color, color,color, color)
         swipe_ly.setOnRefreshListener({
             clearList()
             loadData()
         })
 
-        ddm_duration.popMenu = RankOrdersPopupWindow(activity, line, arrayOf("三日排行", "周排行"))
+        ddm_duration.popMenu = RankOrdersPopupWindow(activity!!, line, arrayOf("三日排行", "周排行"))
         ddm_duration.popMenu?.onCheckItemPositionChanged = { text, position ->
             ddm_duration.text = text
             dayNum = arrayOf(3, 7)[position]
@@ -86,7 +86,7 @@ class BangumiRankFragment : BaseFragment() {
             loadData()
         }
 
-        ddm_region.popMenu = RankOrdersPopupWindow(activity, line, arrayOf(
+        ddm_region.popMenu = RankOrdersPopupWindow(activity!!, line, arrayOf(
                 "番剧", "国产动画"
         ))
         ddm_region.popMenu?.onCheckItemPositionChanged = { text, position ->

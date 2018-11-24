@@ -310,11 +310,11 @@ class InfoActivity : BaseActivity() {
         card_uper.setOnLongClickListener {
             val items_selector = arrayOf("查看up主头像")
             AlertDialog.Builder(activity)
-                    .setItems(items_selector, { dialogInterface, n ->
+                    .setItems(items_selector) { dialogInterface, n ->
                         PhotoActivity.launch(activity
                                 , (detailsInfo as VideoDetailsInfo).uper_face!!
                                 , (detailsInfo as VideoDetailsInfo).uper_name!!)
-                    })
+                    }
                     .setCancelable(true)
                     .show()
             true
@@ -360,13 +360,13 @@ class InfoActivity : BaseActivity() {
      * 加载音频信息
      */
     private fun loadAudioInfo() {
-        card_audio.visibility = View.VISIBLE
-        et_audio_url.setText((detailsInfo as AudioDetailsInfo).audio_url)
-        btn_copy.setOnClickListener {
-            val plaster = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            plaster.text = et_audio_url.text
-            toast("已复制到剪切板(/▽＼)")
-        }
+//        card_audio.visibility = View.VISIBLE
+//        et_audio_url.setText((detailsInfo as AudioDetailsInfo).audio_url)
+//        btn_copy.setOnClickListener {
+//            val plaster = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//            plaster.text = et_audio_url.text
+//            toast("已复制到剪切板(/▽＼)")
+//        }
     }
 
     /**

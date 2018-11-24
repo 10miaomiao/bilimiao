@@ -15,7 +15,7 @@ class SelectorDateFragment : BaseFragment() {
     override var layoutResId: Int = R.layout.fragment_selector_date
     override fun finishCreateView(savedInstanceState: Bundle?) {
         btn_time.setOnClickListener {
-            SelectorDateActivity.launch(activity)
+            SelectorDateActivity.launch(activity!!)
         }
         loadDate()
     }
@@ -29,7 +29,7 @@ class SelectorDateFragment : BaseFragment() {
      * 加载日期
      */
     private fun loadDate() {
-        val selectorDateUtil = SelectorDateUtil(activity)
+        val selectorDateUtil = SelectorDateUtil(activity!!)
         val s = arrayOf("当前为默认模式", "当前为自定义模式", "当前为快速选择月份模式")
         text_type.text = s[selectorDateUtil.timeType]
         val timeFrom = SelectorDateUtil.formatDate(selectorDateUtil.timeFrom!!, "/")

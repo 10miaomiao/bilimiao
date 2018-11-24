@@ -31,7 +31,7 @@ class BangumiResultFragment : BaseFragment() {
     var pageNum = 1
     val pageSize = 10
     val keyword: String by lazy {
-        arguments.getString(ConstantUtil.KETWORD)
+        arguments!!.getString(ConstantUtil.KETWORD)
     }
     var archives = ArrayList<SearchBangumiInfo.DataBean.ItemsBean>()
     var mAdapter: BangumiResultAdapter? = null
@@ -43,7 +43,7 @@ class BangumiResultFragment : BaseFragment() {
     var loadMoreView: LoadMoreView? = null
     lateinit var pKeywords: ArrayList<String>
     val keywordDB: KeyWordDB by lazy {
-        KeyWordDB(activity, KeyWordDB.DB_NAME, null, 1)
+        KeyWordDB(activity!!, KeyWordDB.DB_NAME, null, 1)
     }
     var pNumber = 0   //屏蔽数量
     var listSize: Int
@@ -53,7 +53,7 @@ class BangumiResultFragment : BaseFragment() {
         get() = archives.size + pNumber
 
     override fun finishCreateView(savedInstanceState: Bundle?) {
-        loadMoreView = LoadMoreView(activity)
+        loadMoreView = LoadMoreView(activity!!)
         mAdapter = BangumiResultAdapter(archives)
         mAdapter?.addFooterView(loadMoreView)
         var mLinearLayoutManager = LinearLayoutManager(activity)
@@ -63,7 +63,7 @@ class BangumiResultFragment : BaseFragment() {
             adapter = mAdapter
         }
         pKeywords = keywordDB.queryAllHistory()
-        val color = ThemeHelper.getColorAccent(context)
+        val color = ThemeHelper.getColorAccent(context!!)
         swipe_ly.setColorSchemeResources(color, color,color, color)
 
         swipe_ly.setOnRefreshListener({
@@ -71,18 +71,18 @@ class BangumiResultFragment : BaseFragment() {
             loadData()
         })
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_BANGUMI, archives[position].param)
+            IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_BANGUMI, archives[position].param)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看封面")
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {
                             0 -> {
-                                InfoActivity.launch(activity, archives[position].param, "anime")
+                                InfoActivity.launch(activity!!, archives[position].param, "anime")
                             }
                             1 -> {
-                                SettingActivity.selectPalyer(activity)
+                                SettingActivity.selectPalyer(activity!!)
                             }
                         }
 

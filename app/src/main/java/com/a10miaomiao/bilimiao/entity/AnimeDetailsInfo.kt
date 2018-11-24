@@ -22,13 +22,12 @@ class AnimeDetailsInfo(aid: String) : DetailsInfo(aid) {
                     try {
                         val jsonObject = (jsonParser.nextValue() as JSONObject).getJSONObject("result")
                         pic = jsonObject.getString("cover")
-                        //log(pic!!)
                         title = jsonObject.getString("title")
                         var jsonArray = jsonObject.getJSONArray("episodes")
                         for (i in 0 until jsonArray.length()) {
                             episodes.add(BangumiEpisodesInfo(
-                                    jsonArray.getJSONObject(i).getString("av_id"),
-                                    jsonArray.getJSONObject(i).getInt("danmaku"),
+                                    jsonArray.getJSONObject(i).getString("aid"),
+                                    jsonArray.getJSONObject(i).getInt("cid"),
                                     jsonArray.getJSONObject(i).getString("index_title"),
                                     jsonArray.getJSONObject(i).getString("index")
                             ))

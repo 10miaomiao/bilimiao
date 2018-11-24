@@ -11,11 +11,9 @@ import com.chad.library.adapter.base.BaseViewHolder
 class HomeRegionItemAdapter(list: List<HomeRegionInfo>)
     : BaseQuickAdapter<HomeRegionInfo, BaseViewHolder>(R.layout.item_home_region, list) {
 
-    override fun convert(helper: BaseViewHolder?, item: HomeRegionInfo?) {
-        helper?.setImageResource(R.id.item_icon, item?.icon!!)
-        helper?.setText(R.id.item_title, item?.name)
+    override fun convert(helper: BaseViewHolder, item: HomeRegionInfo) {
+        helper.setImageResource(R.id.item_icon, item.icon!!)
+        helper.setText(R.id.item_title, item.name)
     }
-
-
-
+    
 }

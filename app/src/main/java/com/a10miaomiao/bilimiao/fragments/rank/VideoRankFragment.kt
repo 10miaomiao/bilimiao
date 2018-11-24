@@ -41,17 +41,17 @@ class VideoRankFragment : BaseFragment() {
     var api: ((isall: Boolean, dayNum: Int, rid: Int) -> String)? = null
 
     val keywordDB: KeyWordDB by lazy {
-        KeyWordDB(activity, KeyWordDB.DB_NAME, null, 1)
+        KeyWordDB(activity!!, KeyWordDB.DB_NAME, null, 1)
     }
     val upperDB: PreventUpperDB by lazy {
-        PreventUpperDB(activity, PreventUpperDB.DB_NAME, null, 1)
+        PreventUpperDB(activity!!, PreventUpperDB.DB_NAME, null, 1)
     }
     lateinit var pKeywords: ArrayList<String>
     lateinit var pUppers: ArrayList<PreventUpperDB.Upper>
 
 
     override fun finishCreateView(savedInstanceState: Bundle?) {
-        loadMoreView = LoadMoreView(activity)
+        loadMoreView = LoadMoreView(activity!!)
 
         pKeywords = keywordDB.queryAllHistory()
         pUppers = upperDB.queryAllHistory()
@@ -64,18 +64,18 @@ class VideoRankFragment : BaseFragment() {
             adapter = mAdapter
         }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_VIDEO, archives[position].aid)
+            IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_VIDEO, archives[position].aid)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看封面")
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setItems(items_selector, { dialogInterface, n ->
                         when (n) {
                             0 -> {
-                                InfoActivity.launch(activity, archives[position].aid, "av")
+                                InfoActivity.launch(activity!!, archives[position].aid, "av")
                             }
                             1 -> {
-                                SettingActivity.selectPalyer(activity)
+                                SettingActivity.selectPalyer(activity!!)
                             }
                         }
                     })
@@ -85,11 +85,11 @@ class VideoRankFragment : BaseFragment() {
         }
 
         val typedValue = TypedValue()
-        activity.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-        val color = ThemeHelper.getColorAccent(context)
-        swipe_ly.setColorSchemeResources(color, color,color, color)
+        activity!!.theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
+        val color = ThemeHelper.getColorAccent(context!!)
+        swipe_ly.setColorSchemeResources(color, color, color, color)
 
-        ddm_rank.popMenu = RankOrdersPopupWindow(activity, line, arrayOf("全部投稿", "近期投稿"))
+        ddm_rank.popMenu = RankOrdersPopupWindow(activity!!, line, arrayOf("全部投稿", "近期投稿"))
         ddm_rank.popMenu?.onCheckItemPositionChanged = { text, position ->
             ddm_rank.text = text
             isAll = position == 0
@@ -97,16 +97,16 @@ class VideoRankFragment : BaseFragment() {
             loadData()
         }
 
-        ddm_duration.popMenu = RankOrdersPopupWindow(activity, line, arrayOf("三日排行", "日排行", "周排行","月排行"))
+        ddm_duration.popMenu = RankOrdersPopupWindow(activity!!, line, arrayOf("三日排行", "日排行", "周排行", "月排行"))
         ddm_duration.popMenu?.onCheckItemPositionChanged = { text, position ->
             ddm_duration.text = text
-            var dayNums = arrayOf(3, 1, 7,30)
+            var dayNums = arrayOf(3, 1, 7, 30)
             dayNum = dayNums[position]
             clearList()
             loadData()
         }
 
-        ddm_region.popMenu = RankOrdersPopupWindow(activity, line, arrayOf(
+        ddm_region.popMenu = RankOrdersPopupWindow(activity!!, line, arrayOf(
                 "全部分区", "动画", "国创相关", "音乐",
                 "舞蹈", "游戏", "科技", "生活",
                 "鬼畜", "时尚", "娱乐", "影视"

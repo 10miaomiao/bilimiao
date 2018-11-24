@@ -22,6 +22,7 @@ import com.a10miaomiao.bilimiao.netword.ApiHelper
 import com.a10miaomiao.bilimiao.service.DownloadService
 import com.a10miaomiao.bilimiao.utils.BiliClientDownHelper
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
+import com.a10miaomiao.bilimiao.utils.ThemeHelper
 import kotlinx.android.synthetic.main.dialog_download.*
 
 
@@ -30,10 +31,10 @@ import kotlinx.android.synthetic.main.dialog_download.*
  */
 class DownloadDialog : DialogFragment() {
     val info by lazy {
-        arguments.getParcelable<DownEntryInfo>(ConstantUtil.DATA)
+        arguments!!.getParcelable<DownEntryInfo>(ConstantUtil.DATA)
     }
     val db: DownloadDB by lazy {
-        DownloadDB(activity, DownloadDB.DB_NAME, null, 1)
+        DownloadDB(activity!!, DownloadDB.DB_NAME, null, 1)
     }
     lateinit var mAdapter: RankOrdersAdapter
 
@@ -42,17 +43,23 @@ class DownloadDialog : DialogFragment() {
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.DialogStyle2)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
         val view = inflater!!.inflate(R.layout.dialog_download, container, false)
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // 主题颜色
+        val color = activity!!.resources.getColor(ThemeHelper.getColorAccent(activity!!))
+        tv_download.setTextColor(color)
+        tv_download.setTextColor(color)
+        tv_danmakiu.setTextColor(color)
+        tv_play.setTextColor(color)
         if (db.queryByCID(info.cid) != null) {
             tv_download.text = "已加入下载"
             tv_download.isEnabled = false
-            tv_download.setTextColor(activity.resources.getColor(R.color.text_grey))
+            tv_download.setTextColor(activity!!.resources.getColor(R.color.text_grey))
         }
         //判断是否为番剧
         if (info.video_type == "anime") {
@@ -62,7 +69,7 @@ class DownloadDialog : DialogFragment() {
         if (!isPermissions()) {
             tv_download.text = "没有存储权限"
             tv_download.isEnabled = false
-            tv_download.setTextColor(activity.resources.getColor(R.color.text_grey))
+            tv_download.setTextColor(activity!!.resources.getColor(R.color.text_grey))
             tv_download_app.visibility = View.GONE
         }
         //选择器部分
@@ -77,7 +84,7 @@ class DownloadDialog : DialogFragment() {
             mAdapter.checkItemPosition = position
         }
         tv_danmakiu.setOnClickListener {
-            DanmakuActivity.launch(activity, info.cid)
+            DanmakuActivity.launch(activity!!, info.cid)
             dismiss()
         }
         /**
@@ -85,7 +92,7 @@ class DownloadDialog : DialogFragment() {
          */
         tv_download.setOnClickListener {
             if (info.video_type == "anime") {
-                DownloadService.add(activity, DownloadInfo(
+                DownloadService.add(activity!!, DownloadInfo(
                         cid = info.cid,
                         aid = info.ep_id!!,
                         name = info.title,
@@ -94,7 +101,7 @@ class DownloadDialog : DialogFragment() {
                         pic = info.cover
                 ))
             } else {
-                DownloadService.add(activity, DownloadInfo(
+                DownloadService.add(activity!!, DownloadInfo(
                         cid = info.cid,
                         aid = info.av_id,
                         name = info.title,
@@ -112,7 +119,7 @@ class DownloadDialog : DialogFragment() {
         tv_download_app.setOnClickListener {
             try {
                 var entry = createEntry()
-                BiliClientDownHelper.createAnime(activity, ClientDownInfo(
+                BiliClientDownHelper.createAnime(activity!!, ClientDownInfo(
                         av_id = info.av_id,
                         danmaku_id = info.cid,
                         entry = entry,
@@ -129,7 +136,7 @@ class DownloadDialog : DialogFragment() {
         }
         tv_play.setOnClickListener {
             if(info.video_type == "anime"){
-                PlayerActivity.play(activity, DownloadInfo(
+                PlayerActivity.play(activity!!, DownloadInfo(
                         cid = info.cid,
                         aid = info.ep_id!!,
                         name = info.title,
@@ -138,7 +145,7 @@ class DownloadDialog : DialogFragment() {
                         pic = info.cover
                 ))
             }else{
-                PlayerActivity.play(activity, DownloadInfo(
+                PlayerActivity.play(activity!!, DownloadInfo(
                         cid = info.cid,
                         aid = info.av_id,
                         name = info.title,
@@ -222,7 +229,7 @@ class DownloadDialog : DialogFragment() {
         //判断是否6.0以上的手机 不是就不用
         if (Build.VERSION.SDK_INT >= 23) {
             //判断是否有这个权限
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }

@@ -1,12 +1,14 @@
 package com.a10miaomiao.bilimiao.fragments.search
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.activitys.SettingActivity
 import com.a10miaomiao.bilimiao.activitys.UpperDetailActivity
+import com.a10miaomiao.bilimiao.activitys.VideoInfoActivity
 import com.a10miaomiao.bilimiao.adapter.helper.RecyclerOnScrollListener
 import com.a10miaomiao.bilimiao.adapter.search.UpperResultAdapter
 import com.a10miaomiao.bilimiao.base.BaseFragment
@@ -30,7 +32,7 @@ class UpperResultFragment : BaseFragment() {
     var pageNum = 1
     val pageSize = 10
     val keyword: String by lazy {
-        arguments.getString(ConstantUtil.KETWORD)
+        arguments!!.getString(ConstantUtil.KETWORD)
     }
     var archives = ArrayList<SearchUpperInfo.DataBean.ItemsBean>()
     var mAdapter: UpperResultAdapter? = null
@@ -42,7 +44,7 @@ class UpperResultFragment : BaseFragment() {
     var loadMoreView: LoadMoreView? = null
     lateinit var pKeywords: ArrayList<String>
     val keywordDB: KeyWordDB by lazy {
-        KeyWordDB(activity, KeyWordDB.DB_NAME, null, 1)
+        KeyWordDB(activity!!, KeyWordDB.DB_NAME, null, 1)
     }
     var pNumber = 0   //屏蔽数量
     var listSize: Int
@@ -52,7 +54,7 @@ class UpperResultFragment : BaseFragment() {
         get() = archives.size + pNumber
 
     override fun finishCreateView(savedInstanceState: Bundle?) {
-        loadMoreView = LoadMoreView(activity)
+        loadMoreView = LoadMoreView(activity!!)
         mAdapter = UpperResultAdapter(archives)
         mAdapter?.addFooterView(loadMoreView)
         var mLinearLayoutManager = LinearLayoutManager(activity)
@@ -63,30 +65,36 @@ class UpperResultFragment : BaseFragment() {
         }
         pKeywords = keywordDB.queryAllHistory()
 
-        val color = ThemeHelper.getColorAccent(context)
+        val color = ThemeHelper.getColorAccent(context!!)
         swipe_ly.setColorSchemeResources(color, color,color, color)
 
-        swipe_ly.setOnRefreshListener({
+        swipe_ly.setOnRefreshListener {
             clearList()
             loadData()
-        })
+        }
         mAdapter?.setOnItemClickListener { adapter, view, position ->
-            IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_AUTHOR, archives[position].param)
+            val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
+            if (!prefs.getBoolean("is_bili_player", false)) {
+                var a = archives[position]
+                UpperDetailActivity.launch(activity!!, a.param.toInt(), a.title, a.cover)
+                return@setOnItemClickListener
+            }
+            IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_AUTHOR, archives[position].param)
         }
         mAdapter?.setOnItemLongClickListener { adapter, view, position ->
             val items_selector = arrayOf("查看up主信息")
-            AlertDialog.Builder(activity)
-                    .setItems(items_selector, { dialogInterface, n ->
+            AlertDialog.Builder(activity!!)
+                    .setItems(items_selector) { dialogInterface, n ->
                         when (n) {
                             0 -> {
                                 var a = archives[position]
-                                UpperDetailActivity.launch(activity, a.param.toInt(), a.title, a.cover)
+                                UpperDetailActivity.launch(activity!!, a.param.toInt(), a.title, a.cover)
                             }
                             1 -> {
-                                SettingActivity.selectPalyer(activity)
+                                SettingActivity.selectPalyer(activity!!)
                             }
                         }
-                    })
+                    }
                     .setCancelable(true)
                     .show()
             true

@@ -232,6 +232,17 @@ class DownloadDB(context: Context, name: String, factory: SQLiteDatabase.CursorF
     }
 
     /**
+     * 删除全部下载中
+     */
+    fun deleteAllDownloading() {
+        val db = writableDatabase
+        //删除全部数据
+        db.delete(TABLE_NAME, "status!=?", arrayOf(DownloadInfo.FINISH.toString()))
+        //关闭数据库
+        db.close()
+    }
+
+    /**
      * 删除全部数据
      */
     fun deleteAll() {

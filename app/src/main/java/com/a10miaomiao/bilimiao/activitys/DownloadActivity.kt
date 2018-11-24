@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.adapter.PagerAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.fragments.download.DownloadedFragment
 import com.a10miaomiao.bilimiao.fragments.download.DownloadingFragment
@@ -28,7 +29,7 @@ class DownloadActivity : BaseActivity() {
                 DownloadedFragment()
         ))
 
-        vp_view.adapter = mAdapter//给ViewPager设置适配器
+        vp_view.adapter = mAdapter //给ViewPager设置适配器
         tabs.apply {
             tabMode = TabLayout.MODE_FIXED
             setupWithViewPager(vp_view)//将TabLayout和ViewPager关联起来。

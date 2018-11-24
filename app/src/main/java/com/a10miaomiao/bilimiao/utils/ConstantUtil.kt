@@ -4,6 +4,7 @@ package com.a10miaomiao.bilimiao.utils
  * Created by 10喵喵 on 2017/10/29.
  */
 object ConstantUtil {
+    val APP_NAME = "bilimiao"
     val EXTRA_PARTITION = "extra_partition"
     val EXTRA_RID = "extra_rid"
     val DATA = "data"
@@ -27,6 +28,7 @@ object ConstantUtil {
 //    val PLAYER_BILIXL = 3  //哔哩哔哩白
     val PLAYER_BROWSER = 3  //浏览器
 
+    val ID = "id"
     val AID = "aid"
     val TYPE = "type"
     val DO = "do"
@@ -36,4 +38,5 @@ object ConstantUtil {
     var PIC = "pic"
     val NAME = "name"
     var KETWORD = "keyword"
+    val DILIURL = "DILIURL"
 }

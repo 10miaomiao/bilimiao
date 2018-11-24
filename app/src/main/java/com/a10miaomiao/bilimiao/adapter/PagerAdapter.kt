@@ -1,4 +1,4 @@
-package com.a10miaomiao.bilimiao.activitys
+package com.a10miaomiao.bilimiao.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

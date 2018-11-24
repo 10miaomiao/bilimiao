@@ -85,9 +85,7 @@ class DownloadManager {
             //初始进度信息
             //t.onNext(info)
             val request = Request.Builder()
-                    .url(info.url)
-            log(info.making)
-            log(info.url)
+                    .url(info.url.replaceFirst("http","https"))
             if (downloadLength > 0) {
                 request.addHeader("RANGE", "bytes=$downloadLength-${info.size}")
             }

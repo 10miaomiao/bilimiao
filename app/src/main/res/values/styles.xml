@@ -82,4 +82,10 @@
         <item name="android:windowEnterAnimation">@anim/popshow_operation_anim_down</item>
         <item name="android:windowExitAnimation">@anim/pophidden_operation_anim</item>
     </style>
+
+    <!--pupupWindow向左弹出-->
+    <style name="popwindow_anim_left">
+        <item name="android:windowEnterAnimation">@anim/popshow_operation_anim_left</item>
+        <item name="android:windowExitAnimation">@anim/pophidden_operation_anim_left</item>
+    </style>
 </resources>

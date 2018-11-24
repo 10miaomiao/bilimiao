@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.adapter.PagerAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.fragments.EditPreventKeywordFragments
 import com.a10miaomiao.bilimiao.fragments.PreventUpperFragments

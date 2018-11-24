@@ -30,7 +30,7 @@ import java.io.File
 class DownloadedFragment : BaseFragment() {
     override var layoutResId = R.layout.fragment_download
     val db: DownloadDB by lazy {
-        DownloadDB(activity, DownloadDB.DB_NAME, null, 1)
+        DownloadDB(activity!!, DownloadDB.DB_NAME, null, 1)
     }
     var mAdapter: DownloadAdapter? = null
     var list = ArrayList<DownloadInfo>()
@@ -50,7 +50,7 @@ class DownloadedFragment : BaseFragment() {
             if (fileIsExists(strFile)) {
                 val intent = Intent(Intent.ACTION_VIEW)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(strFile))
+                    val contentUri = FileProvider.getUriForFile(context!!, BuildConfig.APPLICATION_ID + ".fileProvider", File(strFile))
                     intent.setDataAndType(contentUri, "video/*")
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 } else {
@@ -63,14 +63,14 @@ class DownloadedFragment : BaseFragment() {
                 for (i in 0 until item._count) {
                     items[i] = "视频片段${i + 1}"
                 }
-                AlertDialog.Builder(activity)
+                AlertDialog.Builder(activity!!)
                         .setTitle("共${item._count}个视频片段")
-                        .setItems(items, { dialogInterface, i ->
+                        .setItems(items) { dialogInterface, i ->
                             strFile = path + item.name + "/" + i + item.videoType
                             if (fileIsExists(strFile)) {
                                 val intent = Intent(Intent.ACTION_VIEW)
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    val contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(strFile))
+                                    val contentUri = FileProvider.getUriForFile(context!!, BuildConfig.APPLICATION_ID + ".fileProvider", File(strFile))
                                     intent.setDataAndType(contentUri, "video/*")
                                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 } else {
@@ -78,27 +78,27 @@ class DownloadedFragment : BaseFragment() {
                                 }
                                 startActivity(intent)
                             } else {
-                                AlertDialog.Builder(activity)
+                                AlertDialog.Builder(activity!!)
                                         .setTitle("文件被吃了ˋ( ° ▽、° ) ")
                                         .setNegativeButton("确定", null)
                                         .show()
                             }
-                        })
+                        }
                         .show()
 
             } else {
-                AlertDialog.Builder(activity)
+                AlertDialog.Builder(activity!!)
                         .setTitle("文件被吃了ˋ( ° ▽、° ) ")
                         .setNegativeButton("确定", null)
                         .show()
             }
         }
         mAdapter!!.setOnItemLongClickListener { adapter, view, position ->
-            AlertDialog.Builder(activity)
-                    .setItems(arrayOf("删除视频"), { dialogInterface, i ->
-                        var item = list[i]
-                        var f1 = File(path + list[i].fileName)
-                        var f2 = File(path + list[i].name + "/")
+            AlertDialog.Builder(activity!!)
+                    .setItems(arrayOf("删除视频")) { dialogInterface, i ->
+                        var item = list[position]
+                        var f1 = File(path + item.fileName)
+                        var f2 = File(path + item.name + "/")
                         if (f1.exists()) {
                             f1.delete()
                         }
@@ -111,7 +111,7 @@ class DownloadedFragment : BaseFragment() {
                         db.delete(item.cid)
                         list.removeAt(i)
                         mAdapter!!.notifyDataSetChanged()
-                    })
+                    }
                     .show()
             true
         }

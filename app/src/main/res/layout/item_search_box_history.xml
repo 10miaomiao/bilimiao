@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_history_24dp"
+
         android:drawablePadding="16dp"
         android:ellipsize="end"
         android:foreground="?android:attr/selectableItemBackground"

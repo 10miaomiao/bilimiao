@@ -13,6 +13,7 @@ import com.a10miaomiao.bilimiao.entity.UpperChannelInfo
 import com.a10miaomiao.bilimiao.netword.BiliApiService
 import com.a10miaomiao.bilimiao.netword.MiaoHttp
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
+import com.a10miaomiao.bilimiao.utils.IntentHandlerUtil
 import com.a10miaomiao.bilimiao.utils.log
 import com.a10miaomiao.bilimiao.views.UpperHeaderView
 import com.google.gson.Gson
@@ -56,11 +57,11 @@ class UpperDetailActivity : BaseActivity() {
         loadChannelData()
         swipe_ly.setColorSchemeResources(R.color.colorAccent, R.color.colorAccent,
                 R.color.colorAccent, R.color.colorAccent)
-        swipe_ly.setOnRefreshListener({
+        swipe_ly.setOnRefreshListener {
             clearList()
             loadSubmitData()
             loadChannelData()
-        })
+        }
     }
 
     override fun initToolBar() {
@@ -76,15 +77,22 @@ class UpperDetailActivity : BaseActivity() {
             toolbar.menu.add("屏蔽该up主")
             isPrevent = false
         }
+        toolbar.menu.add("用b站客户端打开")
         toolbar.setOnMenuItemClickListener {
-            if(isPrevent) {
-                upperDB.deleteHistory(mid.toString())
-                isPrevent = false
-                toolbar.menu.getItem(0).title = "屏蔽该up主"
-            }else {
-                upperDB.insertHistory(mid, name)
-                isPrevent = true
-                toolbar.menu.getItem(0).title = "取消屏蔽该up主"
+            when(it.title){
+                "用b站客户端打开" -> {
+                    IntentHandlerUtil.openWithPlayer_old(activity, IntentHandlerUtil.TYPE_AUTHOR, mid.toString())
+                }
+                "取消屏蔽该up主" -> {
+                    upperDB.deleteHistory(mid.toString())
+                    isPrevent = false
+                    toolbar.menu.getItem(0).title = "屏蔽该up主"
+                }
+                "屏蔽该up主" -> {
+                    upperDB.insertHistory(mid, name)
+                    isPrevent = true
+                    toolbar.menu.getItem(0).title = "取消屏蔽该up主"
+                }
             }
             true
         }

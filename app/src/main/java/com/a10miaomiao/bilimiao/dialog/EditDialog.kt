@@ -21,27 +21,27 @@ class EditDialog : DialogFragment() {
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.DialogStyle2)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
         val view = inflater!!.inflate(R.layout.dialog_edit_name, container,false)
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         btn_ok.setOnClickListener {
-            KeyboardUtil.closeKeyboard(activity, et_content)
+            KeyboardUtil.closeKeyboard(activity!!, et_content)
             dismiss()
             onFinishInput?.invoke(et_content.text.toString())
         }
         dialog.setOnDismissListener {
-            KeyboardUtil.closeKeyboard(activity, et_content)
+            KeyboardUtil.closeKeyboard(activity!!, et_content)
         }
         view_search_outside.setOnClickListener {
-            KeyboardUtil.closeKeyboard(activity, et_content)
+            KeyboardUtil.closeKeyboard(activity!!, et_content)
             dismiss()
         }
-        if(arguments.containsKey("hint")){
-            et_content.hint = arguments.getString("hint")
+        if(arguments!!.containsKey("hint")){
+            et_content.hint = arguments!!.getString("hint")
         }
         //et_content.setText(name)
 //        var ea: Editable = et_content.text
@@ -59,6 +59,6 @@ class EditDialog : DialogFragment() {
         val width = metrics.widthPixels //DialogSearch的宽
         window.setLayout(width, WindowManager.LayoutParams.MATCH_PARENT)
         window.setGravity(Gravity.BOTTOM)
-        KeyboardUtil.openKeyboard(activity, et_content)
+        KeyboardUtil.openKeyboard(activity!!, et_content)
     }
 }

@@ -57,20 +57,20 @@ class SearchBoxFragment : DialogFragment()
         initDialog()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE) // 设置Content前设定
-        var view = inflater?.inflate(R.layout.dialog_search_box, container, false)
+        var view = inflater.inflate(R.layout.dialog_search_box, container, false)
         init()//实例化
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         iv_search_back.setOnClickListener {
             hideAnim()
         }
         iv_search_search.setOnClickListener {
-            KeyboardUtil.closeKeyboard(activity, et_search_keyword)
+            KeyboardUtil.closeKeyboard(activity!!, et_search_keyword)
             hideAnim()
             search()
         }
@@ -86,23 +86,23 @@ class SearchBoxFragment : DialogFragment()
         rv_search_history.layoutManager = LinearLayoutManager(context)//list类型
         rv_search_history.adapter = searchHistoryAdapter
         //设置删除单个记录的监听
-        searchHistoryAdapter?.setOnItemClickListener({ baseQuickAdapter, view, i ->
+        searchHistoryAdapter?.setOnItemClickListener{ baseQuickAdapter, view, i ->
             onItemClick(historys[i])
-        })
-        searchHistoryAdapter?.setOnItemLongClickListener({ baseQuickAdapter, view, i ->
+        }
+        searchHistoryAdapter?.setOnItemLongClickListener { baseQuickAdapter, view, i ->
             if( tv_search_clean!!.visibility == View.GONE)
                 return@setOnItemLongClickListener true
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setTitle("确定删除：\"${historys[i]}\"")
                     .setNegativeButton("取消", null)
-                    .setPositiveButton("确定", { dialogInterface, ii ->
+                    .setPositiveButton("确定") { dialogInterface, ii ->
                         onItemDeleteClick(historys[i])
-                    })
+                    }
                     .show()
             true
-        })
+        }
 
-        KeyboardUtil.openKeyboard(activity, et_search_keyword)
+        KeyboardUtil.openKeyboard(activity!!, et_search_keyword)
         tv_search_clean.setOnClickListener {
             searchHistoryDB.deleteAllHistory()
             historys.clear()
@@ -113,8 +113,8 @@ class SearchBoxFragment : DialogFragment()
         //监听编辑框文字改变
         et_search_keyword.addTextChangedListener(TextWatcherImpl())
 
-        if (arguments.containsKey(ConstantUtil.KETWORD)) {
-            et_search_keyword.setText(arguments.getString(ConstantUtil.KETWORD))
+        if (arguments!!.containsKey(ConstantUtil.KETWORD)) {
+            et_search_keyword.setText(arguments!!.getString(ConstantUtil.KETWORD))
             et_search_keyword.setSelection(et_search_keyword.text.length)
         }
     }
@@ -238,7 +238,7 @@ class SearchBoxFragment : DialogFragment()
      */
     override fun onShowAnimationEnd() {
         if (isVisible) {
-            KeyboardUtil.openKeyboard(activity, et_search_keyword)
+            KeyboardUtil.openKeyboard(activity!!, et_search_keyword)
         }
     }
 
@@ -246,7 +246,7 @@ class SearchBoxFragment : DialogFragment()
      * 搜索框动画隐藏完毕时调用
      */
     override fun onHideAnimationEnd() {
-        KeyboardUtil.closeKeyboard(activity, et_search_keyword)
+        KeyboardUtil.closeKeyboard(activity!!, et_search_keyword)
         dismiss()
     }
 
@@ -264,7 +264,7 @@ class SearchBoxFragment : DialogFragment()
      * 点击单个搜索记录
      */
     private fun onItemClick(keyword: String?) {
-        KeyboardUtil.closeKeyboard(activity, et_search_keyword)
+        KeyboardUtil.closeKeyboard(activity!!, et_search_keyword)
         searchHistoryDB.deleteHistory(keyword)
         searchHistoryDB.insertHistory(keyword)
         hideAnim()

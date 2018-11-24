@@ -4,11 +4,11 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/mHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#99000000"
-        android:padding="5dp"
         android:gravity="center_vertical">
 
         <ImageView
@@ -33,17 +33,35 @@
 
     <ImageView
         android:id="@+id/mTvPlay"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_above="@+id/media_controller_controls"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/mMediaMontrollerControls"
         android:padding="@dimen/default_general_margin"
         android:src="@drawable/ic_tv_play"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/default_general_margin" />
 
 
+    <ImageView
+        android:id="@+id/mOpenLockLeftIV"
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/shape_semicircle_left"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/mOpenLockRightIV"
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/shape_semicircle_right"
+        android:visibility="gone"/>
+
     <LinearLayout
-        android:id="@+id/media_controller_controls"
+        android:id="@+id/mMediaMontrollerControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -74,13 +92,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="5dp"
+            android:paddingHorizontal="5dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/mPauseButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:background="@null"
                 android:gravity="center"
                 android:src="@drawable/bili_player_play_can_play"
@@ -134,15 +152,14 @@
                 <ImageView
                     android:id="@+id/mDanmakuSwitchIV"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/bili_player_danmaku_is_open"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="3dp"/>
 
                 <TextView
                     android:id="@+id/mDanmakuSwitchTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
                     android:text="弹幕开"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/default_tiny_text_size" />
@@ -151,31 +168,31 @@
 
 
             <LinearLayout
-                android:id="@+id/media_controller_controls_quality_layout"
+                android:id="@+id/mQualityLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:foreground="?attr/selectableItemBackground"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_player_media_quality_medium"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="3dp"/>
                 <TextView
                     android:id="@+id/media_controller_quality_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
-                    android:text="施工中"
+                    android:text="清晰度"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/default_tiny_text_size" />
             </LinearLayout>
 
 
             <LinearLayout
-                android:id="@+id/media_controller_controls_lock_layout"
+                android:id="@+id/mLockLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:foreground="?attr/selectableItemBackground"
@@ -184,20 +201,18 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_player_locked_2"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="3dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/mediacontroller_bottom_layout_danmaku_padding"
-                    android:text="施工中"
+                    android:text="锁定"
                     android:textColor="@color/colorWhite"
                     android:textSize="@dimen/default_tiny_text_size" />
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
-
 </RelativeLayout>

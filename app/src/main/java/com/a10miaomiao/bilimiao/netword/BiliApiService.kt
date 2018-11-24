@@ -16,23 +16,24 @@ object BiliApiService {
      * 获取视频信息
      */
     fun getVideoInfo(aid: String): String{
-        return "http://app.bilibili.com/x/view?_device=wp&_ulv=10000&access_key=&aid=$aid&appkey=${ApiHelper.appKey_Android}&build=411005&plat=4&platform=android&ts=${ApiHelper.getTimeSpen()}"
+        return "https://app.bilibili.com/x/view?_device=wp&_ulv=10000&access_key=&aid=$aid&appkey=${ApiHelper.appKey_Android}&build=411005&plat=4&platform=android&ts=${ApiHelper.getTimeSpen()}"
     }
     /**
      * 获取番剧信息
      */
     fun getBangumiInfo(aid: String): String{
-        var url = "http://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.getTimeSpen()}&type=bangumi"
+        // var url = "https://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.getTimeSpen()}&type=bangumi"
         //var url = "http://bangumi.bilibili.com/api/season_v3?_device=wp&access_key=${ApiHelper.appKey_Android}&_ulv=10000&build=411005&platform=android&appkey=422fd9d7289a1dd9&ts=${ApiHelper.GetTimeSpen()}000&type=bangumi&season_id=$aid"
         //val url = "http://bangumi.bilibili.com/api/season_v4?access_key=19946e1ef3b5cad1a756c475a67185bb&actionKey=appkey&appkey=27eb53fc9058f8c3&build=3940&device=phone&mobi_app=iphone&platform=ios&season_id=$aid&sign=3e5d4d7460961d9bab5da2341fd98dc1&ts=1477898526&type=bangumi"
-        url += "&sign=" + ApiHelper.getSign_Android(url)
-        return url;
+        var url = "https://bangumi.bilibili.com/view/api/season?access_key=&appkey=1d8b6e7d45233436&build=5310300&mobi_app=android&platform=android&season_id=$aid&ts=${ApiHelper.getTimeSpen()}"
+        url += "&sign=" + ApiHelper.getSign_New(url)
+        return url
     }
     /**
      * 获取直播信息
      */
     fun getLiveInfo(aid: String): String{
-        var url = "http://live.bilibili.com/AppRoom/index?_device=android&access_key=&appkey=${ApiHelper.appKey_Android}&build=434000&buld=434000&jumpFrom=24000&mobi_app=android&platform=android&room_id=$aid&scale=xxhdpi"
+        var url = "https://live.bilibili.com/AppRoom/index?_device=android&access_key=&appkey=${ApiHelper.appKey_Android}&build=434000&buld=434000&jumpFrom=24000&mobi_app=android&platform=android&room_id=$aid&scale=xxhdpi"
         //var url = "http://bangumi.bilibili.com/api/season_v3?_device=android&_ulv=10000&access_key=&appkey=${ApiHelper.appKey_Android}&build=411005&platform=android&season_id=$aid&ts=${ApiHelper.GetTimeSpen()}&type=bangumi"
         url += "&sign=" + ApiHelper.getSign_Android(url)
         return url
@@ -41,17 +42,17 @@ object BiliApiService {
     /**
      * 获取音频信息
      */
-    fun getAudioInfo(aid: String) = "https://m.bilibili.com/audio/au$aid"
+    fun getAudioInfo(aid: String) = "https://www.bilibili.com/audio/music-service-c/web/song/info?sid=$aid"
 
     /**
      * 获取专栏信息
      */
-    fun getCvInfo(aid: String) = "http://www.bilibili.com/read/mobile/$aid"
+    fun getCvInfo(aid: String) = "https://www.bilibili.com/read/mobile/$aid"
 
     /**
      * 获取弹幕列表
      */
-    fun getDanmakuList(cid: String) = "http://comment.bilibili.com/$cid.xml"
+    fun getDanmakuList(cid: String) = "https://comment.bilibili.com/$cid.xml"
 
     //-------------up主部分---------------
     /**
@@ -75,28 +76,35 @@ object BiliApiService {
      * 综合
      */
     fun getSearchArchive(keyword: String,pageNum: Int,pageSize: Int,order: String,duration: Int,rid: Int) =
-            "http://app.bilibili.com/x/v2/search?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&duration=$duration&mobi_app=iphone&order=$order&platform=ios&rid=$rid&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+            "https://app.bilibili.com/x/v2/search?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&duration=$duration&mobi_app=iphone&order=$order&platform=ios&rid=$rid&keyword=$keyword&pn=$pageNum&ps=$pageSize"
     /**
      * 番剧
      */
     fun getSearchBangumi(keyword: String,pageNum: Int,pageSize: Int) =
-            "http://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=1&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+            "https://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=1&keyword=$keyword&pn=$pageNum&ps=$pageSize"
     /**
      * 直播
      */
     fun getSearchUpper(keyword: String,pageNum: Int,pageSize: Int) =
-            "http://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=2&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+            "https://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=2&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+
+    /**
+     * 直播
+     */
+    fun getSearchDili(keyword: String,pageNum: Int,pageSize: Int) =
+            "https://10miaomiao.cn/miao/bilimiao/search/bangumi?keyword=$keyword&pn=$pageNum&ps=$pageSize&v=0"
+
 
     /**
      * 影视搜索
      */
     fun getSearchMovie(keyword: String,pageNum: Int,pageSize: Int) =
-            "http://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=3&keyword=$keyword&pn=$pageNum&ps=$pageSize"
+            "https://app.bilibili.com/x/v2/search/type?actionKey=appkey&appkey=27eb53fc9058f8c3&build=3710&device=phone&mobi_app=iphone&platform=ios&type=3&keyword=$keyword&pn=$pageNum&ps=$pageSize"
     /**
      * 关键字列表
      */
     fun getKeyWord(keyword: String) =
-            "http://s.search.bilibili.com/main/suggest?suggest_type=accurate&sub_type=tag&main_ver=v1&term=$keyword"
+            "https://s.search.bilibili.com/main/suggest?suggest_type=accurate&sub_type=tag&main_ver=v1&term=$keyword"
     //------------排行榜部分----------------
     /**
      * 全站

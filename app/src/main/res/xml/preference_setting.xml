@@ -7,6 +7,13 @@
         <!--android:title="选择播放器"-->
         <!--/>-->
 
+        <SwitchPreference
+            android:key="is_bili_player"
+            android:defaultValue="false"
+            android:summaryOff=""
+            android:summaryOn=""
+            android:title="使用外部播放器" />
+
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="请选择客户端类型"
@@ -20,6 +27,7 @@
             android:key="theme"
             android:summary="库洛里多创造的库洛牌啊，请你舍弃旧形象，以小樱之名命令你，封印解除！！！"
             android:title="切换主题" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="强迫症选项">
@@ -40,7 +48,13 @@
             android:defaultValue="false"
             android:summaryOff=""
             android:summaryOn=""
-            android:title="使用新版图标" />
+            android:title="分区列表使用新版图标" />
+        <SwitchPreference
+            android:key="download_notification"
+            android:defaultValue="true"
+            android:summaryOff="不让我调戏就算了，哼(☆-ｖ-)"
+            android:summaryOn="小心我调戏你的通知栏哦ˋ( ° ▽、° ) "
+            android:title="通知栏显示下载信息" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="其它">
@@ -52,6 +66,11 @@
             android:key="donate"
             android:summary="开发者想买内存条"
             android:title="捐助" />
+
+        <Preference
+            android:key="help"
+            android:title="帮助" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

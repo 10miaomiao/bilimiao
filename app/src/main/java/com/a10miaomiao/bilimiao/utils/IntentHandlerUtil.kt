@@ -3,6 +3,7 @@ package com.a10miaomiao.bilimiao.utils
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.preference.PreferenceManager
 import com.a10miaomiao.bilimiao.activitys.VideoInfoActivity
 
 /**
@@ -16,10 +17,17 @@ object IntentHandlerUtil {
      * 调用b站打开打开
      */
     fun openWithPlayer(activity: Activity,type: String, id: String){
-        if(type == TYPE_VIDEO){
-            VideoInfoActivity.launch(activity,id)
-            return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        if (!prefs.getBoolean("is_bili_player", false)) {
+            if(type == TYPE_VIDEO){
+                VideoInfoActivity.launch(activity,id)
+                return
+            }
         }
+        openWithPlayer_old(activity, type, id)
+    }
+
+    fun openWithPlayer_old(activity: Activity,type: String, id: String){
         try {
             var intent = Intent(Intent.ACTION_VIEW)
             var url = when(type){

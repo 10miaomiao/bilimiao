@@ -12,33 +12,28 @@ import org.json.JSONTokener
  */
 class AudioDetailsInfo(aid: String) : DetailsInfo(aid) {
     override var aidType = "au"
-    var audio_url = ""
+    //    var audio_url = ""
     override fun get() {
         MiaoHttp.newStringClient(
                 url = BiliApiService.getAudioInfo(aid),
                 onResponse = {
-                    var a = "window.__INITIAL_STATE__ = "
-                    var n = it.indexOf(a)
-                    var m = it.indexOf("};", n)
-                    if (n != -1 && m != -1) {
-                        var s = it.substring(n + a.length, m + 1)
-                        log(s)
-                        val jsonParser = JSONTokener(s)
-                        try {
-                            val jsonObject = (jsonParser.nextValue() as JSONObject).getJSONObject("audioReducer")
-                            pic = jsonObject.getString("cover_url")
-                            title = jsonObject.getString("title")
-                            var urls = jsonObject.getJSONArray("urls")
-                            audio_url = if(urls.length() > 0) urls.getString(0) else "获取失败"
+                    val jsonParser = JSONTokener(it)
+                    try {
+                        val jsonObject = (jsonParser.nextValue() as JSONObject)
+                        if (jsonObject.getInt("code") == 0) {
+                            val data = jsonObject.getJSONObject("data")
+                            pic = data.getString("cover")
+                            title = data.getString("title")
+//                            audio_url = if (urls.length() > 0) urls.getString(0) else "获取失败"
                             onResponse?.invoke(this@AudioDetailsInfo)
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                            onError?.invoke(e, "视频信息解析失败或无该au号")
-                        } catch (e: ClassCastException){
-                            onError?.invoke(e,"解析失败 -2")
+                        } else {
+                            onError?.invoke(Exception(), jsonObject.getString("msg"))
                         }
-                    } else {
-                        onError?.invoke(Exception(), "解析失败 -1")
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        onError?.invoke(e, "视频信息解析失败或无该au号")
+                    } catch (e: ClassCastException) {
+                        onError?.invoke(e, "解析失败 -2")
                     }
                 },
                 onError = {

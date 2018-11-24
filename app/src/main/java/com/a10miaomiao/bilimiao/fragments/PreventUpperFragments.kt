@@ -18,7 +18,7 @@ class PreventUpperFragments : BaseFragment() {
     override var layoutResId = R.layout.fragment_prevent_upper
 
     val keywordDB: PreventUpperDB by lazy {
-        PreventUpperDB(activity, PreventUpperDB.DB_NAME, null, 1)
+        PreventUpperDB(activity!!, PreventUpperDB.DB_NAME, null, 1)
     }
 
     lateinit var keywords: ArrayList<PreventUpperDB.Upper>
@@ -37,7 +37,7 @@ class PreventUpperFragments : BaseFragment() {
         recycle.addItemDecoration(DividerItemDecoration(activity,
                 DividerItemDecoration.VERTICAL_LIST)) //分割线
         mAdapter.setOnItemClickListener { adapter, view, position ->
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(activity!!)
                     .setTitle("确定删除up主：\"${keywords[position].name}\"")
                     .setNegativeButton("取消", null)
                     .setPositiveButton("确定", { dialogInterface, i ->

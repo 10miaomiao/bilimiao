@@ -15,21 +15,21 @@ import kotlinx.android.synthetic.main.dialog_user.*
  */
 class QueryUserDialog : DialogFragment() {
     private val hash by lazy {
-        arguments.getString("hash")
+        arguments!!.getString("hash")
     }
     private var uid: String? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
         val view = inflater!!.inflate(R.layout.dialog_user, container)
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         loadData()
         btn_view.setOnClickListener {
             if (uid != null) {
-                IntentHandlerUtil.openWithPlayer(activity, IntentHandlerUtil.TYPE_AUTHOR, uid.toString())
+                IntentHandlerUtil.openWithPlayer(activity!!, IntentHandlerUtil.TYPE_AUTHOR, uid.toString())
             }
             dismiss()
         }

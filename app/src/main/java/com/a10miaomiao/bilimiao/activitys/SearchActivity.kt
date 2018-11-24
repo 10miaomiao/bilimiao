@@ -5,12 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import com.a10miaomiao.bilimiao.R
+import com.a10miaomiao.bilimiao.adapter.PagerAdapter
 import com.a10miaomiao.bilimiao.base.BaseActivity
 import com.a10miaomiao.bilimiao.dialog.SearchBoxFragment
-import com.a10miaomiao.bilimiao.fragments.search.BangumiResultFragment
-import com.a10miaomiao.bilimiao.fragments.search.MovieResultsFragment
-import com.a10miaomiao.bilimiao.fragments.search.SearchResultFragment
-import com.a10miaomiao.bilimiao.fragments.search.UpperResultFragment
+import com.a10miaomiao.bilimiao.fragments.search.*
 import com.a10miaomiao.bilimiao.utils.ConstantUtil
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.regex.Pattern
@@ -37,17 +35,19 @@ class SearchActivity : BaseActivity() {
 
         tabs.tabMode = TabLayout.MODE_FIXED//设置tab模式，当前为系统默认模式
         mAdapter = PagerAdapter(supportFragmentManager)
-        mAdapter?.titles?.addAll(arrayListOf("综合", "番剧", "up主", "影视"))
+        mAdapter?.titles?.addAll(arrayListOf("综合", "番剧", "up主", "影视", "滴哩"))
         mAdapter?.fragments?.addAll(arrayListOf(
                 SearchResultFragment.newInstance(keyword),
                 BangumiResultFragment.newInstance(keyword),
                 UpperResultFragment.newInstance(keyword),
-                MovieResultsFragment.newInstance(keyword)
+                MovieResultsFragment.newInstance(keyword),
+                DiliResultFragment.newInstance(keyword)
         ))
 
         vp_view.adapter = mAdapter//给ViewPager设置适配器
         tabs.setupWithViewPager(vp_view)//将TabLayout和ViewPager关联起来。
         tabs.setTabsFromPagerAdapter(mAdapter)//给Tabs设置适配器
+        vp_view.currentItem = intent.getIntExtra("currentItem", 0)
     }
 
     override fun initToolBar() {
@@ -57,21 +57,8 @@ class SearchActivity : BaseActivity() {
         searchFragment.onSearchClick = {
             var d = search(it)
             if (d == null) {
-                //toast("请输入正确的格式")
                 tv_search.text = it
-//                mAdapter?.fragments?.clear()
-//                mAdapter?.fragments?.addAll(arrayListOf(
-//                        SearchResultFragment.newInstance(it),
-//                        BangumiResultFragment.newInstance(it),
-//                        UpperResultFragment.newInstance(it)
-//                ))
-//                mAdapter?.notifyDataSetChanged()
-//                var bundle = Bundle()
-//                bundle.putString(ConstantUtil.KETWORD,it)
-//                searchResultFragment.arguments = bundle
-//                bangumiResultFragment.arguments = bundle
-//                upperResultFragment.arguments = bundle
-                noAnimationLaunch(activity, it)
+                noAnimationLaunch(activity, it, vp_view.currentItem)
                 finish()
                 overridePendingTransition(0, 0)
                 true
@@ -118,10 +105,11 @@ class SearchActivity : BaseActivity() {
             activity.startActivity(mIntent)
         }
 
-        fun noAnimationLaunch(activity: Activity, keyword: String) {
+        fun noAnimationLaunch(activity: Activity, keyword: String, currentItem: Int) {
             val mIntent = Intent(activity, SearchActivity::class.java)
             mIntent.putExtra(ConstantUtil.KETWORD, keyword)
-            mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION;
+            mIntent.putExtra("currentItem", currentItem)
+            mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
             activity.startActivity(mIntent)
         }
     }

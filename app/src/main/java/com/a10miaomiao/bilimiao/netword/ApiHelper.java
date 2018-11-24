@@ -26,11 +26,20 @@ public class ApiHelper {
     public static final String _appSecret_Android2 = "jr3fcr8w7qey8wb0ty5bofurg2cmad8x";
     public static final String _appSecret_VIP = "jr3fcr8w7qey8wb0ty5bofurg2cmad8x";
 
+    // Get from bilibili android client
+    public static final String APP_KEY_NEW = "1d8b6e7d45233436";
+    public static final String APP_SECRET_NEW = "560c52ccd288fed045859ed18bffd973";
+
+    // Another one
+    // APP_KEY = '4409e2ce8ffd12b8'
+    // APP_SECRET = '59b43e04ad6965f34319062b478f83dd'
+
     public static long getTimeSpen() {
         Date date = new Date();
         return date.getTime();
     }
-    public static String getSing(String url,String secret){
+
+    public static String getSing(String url, String secret) {
         String result;
         String str = url.substring(url.indexOf("?", 4) + 1);
         List<String> list = array2list(str.split("&"));
@@ -46,48 +55,43 @@ public class ApiHelper {
         return result;
 
     }
+
     public static String getSign_Android(String url) {
-        return getSing(url,_appSecret_Android);
+        return getSing(url, _appSecret_Android);
+    }
+
+    public static String getSign_New(String url) {
+        return getSing(url, APP_SECRET_NEW);
     }
 
 
     public static List<String> array2list(String[] a) {
         List<String> list = new ArrayList();
-        for(String s : a){
+        for (String s : a) {
             list.add(s);
         }
         return list;
     }
 
-    public static String getMD5(String info)
-    {
-        try
-        {
+    public static String getMD5(String info) {
+        try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update(info.getBytes("UTF-8"));
             byte[] encryption = md5.digest();
 
             StringBuffer strBuf = new StringBuffer();
-            for (int i = 0; i < encryption.length; i++)
-            {
-                if (Integer.toHexString(0xff & encryption[i]).length() == 1)
-                {
+            for (int i = 0; i < encryption.length; i++) {
+                if (Integer.toHexString(0xff & encryption[i]).length() == 1) {
                     strBuf.append("0").append(Integer.toHexString(0xff & encryption[i]));
-                }
-                else
-                {
+                } else {
                     strBuf.append(Integer.toHexString(0xff & encryption[i]));
                 }
             }
 
             return strBuf.toString();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
+        } catch (NoSuchAlgorithmException e) {
             return "";
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             return "";
         }
     }

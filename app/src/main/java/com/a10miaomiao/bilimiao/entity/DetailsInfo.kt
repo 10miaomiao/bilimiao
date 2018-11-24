@@ -8,7 +8,7 @@ abstract class DetailsInfo(var aid: String){
     abstract var aidType: String
     var pic: String? = null
     var onResponse: ((info: DetailsInfo) -> Unit)? = null
-    var onError: ((e: java.lang.Exception?,msg: String) -> Unit)? = null
+    var onError: ((e: kotlin.Throwable ,msg: String) -> Unit)? = null
 
     abstract fun get()
 

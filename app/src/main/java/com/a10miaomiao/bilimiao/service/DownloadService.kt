@@ -1,15 +1,15 @@
 package com.a10miaomiao.bilimiao.service
 
-import android.app.Activity
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.IBinder
-import android.support.v7.app.NotificationCompat
+import android.preference.PreferenceManager
+import android.support.v4.app.NotificationCompat
+//import android.support.v7.app.NotificationCompat
 import android.widget.Toast
 import com.a10miaomiao.bilimiao.activitys.DownloadActivity
 import com.a10miaomiao.bilimiao.db.DownloadDB
@@ -36,9 +36,8 @@ import java.util.regex.Pattern
  */
 class DownloadService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
-    private var manager: NotificationManager? = null
-    //    private var mNotification: Notification? = null
-    private var mBuilder: NotificationCompat.Builder? = null
+    private lateinit var manager: NotificationManager
+    private lateinit var mBuilder: NotificationCompat.Builder
 
 //    var list = ArrayList<DownloadInfo>()
 
@@ -52,42 +51,35 @@ class DownloadService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val mIntent = Intent(this, DownloadActivity::class.java)// 点击跳转到指定页面
-        val pIntent = PendingIntent.getActivity(this, 0, mIntent, 0)
-        mBuilder = NotificationCompat.Builder(this)
-        mBuilder!!.setContentTitle("准备下载")
-                .setContentText("已下载0.00%")
-                .setContentIntent(pIntent)
-                .setSmallIcon(android.R.drawable.stat_sys_download)
-        manager!!.notify(0, mBuilder!!.build())
-
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        createNotification()
+        if(prefs.getBoolean("download_notification", true))
+            manager.notify(0, mBuilder.build())
         Observable.interval(800, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ aLong ->
+                .subscribe { aLong ->
                     if (downloading != null) {
                         try {
                             val intent = Intent(DownloadService.ACTION_UPDATE)
                             intent.putExtra(ConstantUtil.DATA, downloading!!)
                             this@DownloadService.sendBroadcast(intent)
-                            var progress = (downloading!!.progress * 1.0 / downloading!!.size * 100.0)
-                            //progress = (progress / downloading!!.count) + (downloading!!.making * 1.0 / downloading!!.count * 100.0)
-                            //log(progress.toString())
-                            //log("----------------")
-                            val fnum = DecimalFormat("##0.00")
-                            mBuilder!!.setContentTitle(downloading!!.name)
-                                    .setContentText("已下载${fnum.format(progress)}%")
-                                    .setProgress(100, progress.toInt(), false)
-                            manager!!.notify(0, mBuilder!!.build())
-                            //downloading!!.save()
+                            if (prefs.getBoolean("download_notification", true)) {
+                                var progress = (downloading!!.progress * 1.0 / downloading!!.size * 100.0)
+                                val fnum = DecimalFormat("##0.00")
+                                mBuilder.setContentTitle(downloading!!.name)
+                                        .setContentText("已下载${fnum.format(progress)}%")
+                                        .setProgress(100, progress.toInt(), false)
+                                manager.notify(0, mBuilder.build())
+                            }else{
+                                manager.cancel(0)
+                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-
                     } else {
-                        manager?.cancel(0)
+                        manager.cancel(0)
                     }
-                })
+                }
         mDownloadManager.inProgress = {
             downloading?.progress = it.progress
         }
@@ -126,6 +118,24 @@ class DownloadService : Service() {
                 nextDownload()
             }
         }
+    }
+
+    fun createNotification() {
+        manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val mIntent = Intent(this, DownloadActivity::class.java)// 点击跳转到指定页面
+        val pIntent = PendingIntent.getActivity(this, 0, mIntent, 0)
+        mBuilder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val mChannel = NotificationChannel(ConstantUtil.APP_NAME, "download", NotificationManager.IMPORTANCE_LOW)
+            manager.createNotificationChannel(mChannel)
+            NotificationCompat.Builder(this, ConstantUtil.APP_NAME)
+        } else {
+            NotificationCompat.Builder(this)
+        }
+        mBuilder.setContentTitle("准备下载")
+                .setContentText("已下载0.00%")
+                .setContentIntent(pIntent)
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .build()
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -174,9 +184,15 @@ class DownloadService : Service() {
                     reView()
                 }
             }
+            ACTION_FINISHED_All -> {
+                mDownloadManager.cancel()
+                db.deleteAllDownloading()
+                reView()
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }
+
 
     fun playUrl(callback: () -> Unit, error: () -> Unit) {
         //var query = "appkey=f3bb208b3d081dc8&cid=$cid&from=miniplay&otype=json&player=1&quality=1&type=mp4"
@@ -362,6 +378,8 @@ class DownloadService : Service() {
         val ACTION_PAUSE = "ACTION_PAUSE"
         //结束下载
         val ACTION_FINISHED = "ACTION_FINISHED"
+        //结束全部
+        val ACTION_FINISHED_All = "ACTION_FINISHED_All"
         //更新UI
         val ACTION_UPDATE = "ACTION_UPDATE"
         //刷新UI
@@ -391,6 +409,14 @@ class DownloadService : Service() {
             mBundle.putString(ConstantUtil.CID, cid)
             mIntent.putExtras(mBundle)
             mIntent.action = ACTION_FINISHED
+            activity.startService(mIntent)
+        }
+
+        fun delAll(activity: Activity) {
+            val mIntent = Intent(activity, DownloadService::class.java)
+            val mBundle = Bundle()
+            mIntent.putExtras(mBundle)
+            mIntent.action = ACTION_FINISHED_All
             activity.startService(mIntent)
         }
 

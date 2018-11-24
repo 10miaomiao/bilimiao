@@ -28,6 +28,9 @@ class SettingPreferenceFragment : PreferenceFragment() {
     val donate by lazy {
         findPreference("donate") as Preference
     }
+    val help by lazy {
+        findPreference("help") as Preference
+    }
 
     private val select_items by lazy {
         activity.resources.getStringArray(R.array.player_name)
@@ -49,6 +52,7 @@ class SettingPreferenceFragment : PreferenceFragment() {
         val version = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
         about.summary = "版本：" + version
         donate.summary = "开发者想买女朋友o((>ω< ))o"
+        help.summary = "有啥不懂的吗(￣▽￣)"
     }
 
     override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
@@ -76,6 +80,11 @@ class SettingPreferenceFragment : PreferenceFragment() {
             "theme" -> {
                 ThemePickerActivity.launch(activity)
             }
+            "help" -> {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("https://10miaomiao.cn/bilimiao/help.html")
+                startActivity(intent)
+            }
         }
 
         return false
@@ -86,7 +95,7 @@ class SettingPreferenceFragment : PreferenceFragment() {
      */
     fun selectPalyer() {
         AlertDialog.Builder(activity)
-                .setItems(select_items, { dialogInterface, n ->
+                .setItems(select_items) { dialogInterface, n ->
                     //应用程序的包名
                     val packages = arrayOf("tv.danmaku.bili"
                             , "com.bilibili.app.in"
@@ -108,7 +117,7 @@ class SettingPreferenceFragment : PreferenceFragment() {
                     } else {//不存在
                         Toast.makeText(activity, "修改失败，你大概没有安装${select_items[n]}", Toast.LENGTH_LONG).show()
                     }
-                })
+                }
                 .setCancelable(true)
                 .show()
     }
