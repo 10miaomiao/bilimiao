@@ -1,3 +1,7 @@
+# 已废弃
+## 已经转移到[bilimiao2](https://github.com/10miaomiao/bilimiao2) 
+
+
 ## bilimiao
 
 ### Download apk
